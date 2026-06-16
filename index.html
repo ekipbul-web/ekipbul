@@ -1,0 +1,1421 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>EkipBul - RP Grand Mobile</title>
+    <meta name="description" content="EkipBul - RP Grand Mobile için ekip bulma platformu">
+    <link rel="manifest" href="data:application/json,{}">
+    <style>
+        :root {
+            --bg: #0a0a0a;
+            --card: #111111;
+            --card2: #1a1a1a;
+            --border: #222222;
+            --red: #e74c3c;
+            --red2: #ff4444;
+            --blue: #3498db;
+            --blue2: #2980b9;
+            --yellow: #f1c40f;
+            --gold: #ffd700;
+            --text: #ffffff;
+            --text2: #aaaaaa;
+            --text3: #777777;
+            --green: #2ecc71;
+            --purple: #9b59b6;
+            --radius: 12px;
+            --shadow: 0 2px 8px rgba(0,0,0,0.4);
+            --font: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+        }
+        * { margin:0; padding:0; box-sizing:border-box; }
+        body {
+            font-family: var(--font);
+            background: var(--bg);
+            color: var(--text);
+            min-height: 100vh;
+            -webkit-tap-highlight-color: transparent;
+        }
+        ::-webkit-scrollbar { width: 6px; }
+        ::-webkit-scrollbar-track { background: #000; }
+        ::-webkit-scrollbar-thumb { background: var(--red); border-radius: 3px; }
+
+        .navbar {
+            background: #000;
+            border-bottom: 2px solid var(--red);
+            padding: 10px 16px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+            flex-wrap: wrap;
+            gap: 8px;
+        }
+        .logo {
+            font-size: 20px;
+            font-weight: 900;
+            color: #fff;
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            letter-spacing: -1px;
+        }
+        .logo span { color: var(--red); }
+        .logo-icon {
+            background: var(--red);
+            width: 32px; height: 32px;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 14px;
+        }
+        .nav-actions { display: flex; gap: 6px; align-items: center; flex-wrap: wrap; }
+        .btn {
+            padding: 8px 14px;
+            border-radius: 20px;
+            border: none;
+            cursor: pointer;
+            font-size: 12px;
+            font-weight: 700;
+            transition: all 0.2s;
+            white-space: nowrap;
+            text-decoration: none;
+        }
+        .btn-outline { background: transparent; color: #fff; border: 2px solid var(--border); }
+        .btn-outline:hover { border-color: var(--red); }
+        .btn-red { background: var(--red); color: #fff; }
+        .btn-red:hover { background: #c0392b; }
+        .btn-blue { background: var(--blue); color: #fff; }
+        .btn-blue:hover { background: var(--blue2); }
+        .btn-gold { background: var(--yellow); color: #000; }
+        .btn-green { background: var(--green); color: #fff; }
+        .btn-purple { background: var(--purple); color: #fff; }
+        .btn-sm { padding: 6px 10px; font-size: 10px; }
+        .user-badge {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            background: var(--card);
+            padding: 6px 12px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 700;
+            cursor: pointer;
+        }
+        .role-dot { width: 8px; height: 8px; border-radius: 50%; }
+        .container { max-width: 1100px; margin: 0 auto; padding: 16px; }
+
+        .hero {
+            background: linear-gradient(135deg, #1a0000 0%, #0a0a0a 50%, #001a1a 100%);
+            padding: 32px 16px;
+            text-align: center;
+            border-bottom: 1px solid var(--border);
+        }
+        .hero h1 { font-size: 24px; margin-bottom: 6px; }
+        .hero h1 span { color: var(--red); }
+        .hero p { color: var(--text2); font-size: 13px; }
+
+        .tabs {
+            display: flex;
+            gap: 4px;
+            background: var(--card);
+            padding: 6px;
+            border-radius: var(--radius);
+            margin-bottom: 16px;
+            flex-wrap: wrap;
+        }
+        .tab-btn {
+            padding: 10px 18px;
+            border: none;
+            background: transparent;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 700;
+            font-size: 12px;
+            color: var(--text2);
+            transition: all 0.2s;
+            flex: 1;
+            min-width: 80px;
+            text-align: center;
+        }
+        .tab-btn.active { background: var(--red); color: #fff; }
+
+        .listings { display: flex; flex-direction: column; gap: 10px; }
+        .listing-card {
+            background: var(--card);
+            border-radius: var(--radius);
+            padding: 14px;
+            border: 1px solid var(--border);
+            cursor: pointer;
+            transition: all 0.2s;
+            position: relative;
+        }
+        .listing-card:hover { border-color: var(--red); }
+        .listing-card.premium { border-color: var(--yellow); background: #1a1a00; }
+        .listing-header { display: flex; align-items: center; gap: 10px; margin-bottom: 8px; flex-wrap: wrap; }
+        .listing-avatar {
+            width: 44px; height: 44px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 900;
+            font-size: 18px;
+            flex-shrink: 0;
+            background-size: cover;
+            background-position: center;
+        }
+        .av-red { background: #3d0000; color: var(--red); }
+        .av-blue { background: #001a3d; color: var(--blue); }
+        .av-green { background: #003d00; color: var(--green); }
+        .av-gold { background: #3d3000; color: var(--yellow); }
+        .av-purple { background: #1a003d; color: #9b59b6; }
+        .listing-title { font-weight: 700; font-size: 14px; flex: 1; min-width: 150px; }
+        .listing-meta { font-size: 11px; color: var(--text2); display: flex; gap: 10px; flex-wrap: wrap; margin-bottom: 4px; }
+        .listing-tags { display: flex; gap: 6px; flex-wrap: wrap; }
+        .tag {
+            font-size: 10px;
+            padding: 4px 10px;
+            border-radius: 20px;
+            font-weight: 700;
+        }
+        .tag-lfm { background: #3d3000; color: var(--yellow); }
+        .tag-lfg { background: #003d1a; color: var(--green); }
+        .tag-server { background: #1a1a2e; color: var(--blue); }
+        .tag-premium { background: #3d0000; color: var(--red2); }
+        .listing-action { margin-top: 8px; display: flex; gap: 8px; align-items: center; flex-wrap: wrap; }
+        .listing-views { font-size: 10px; color: var(--text3); }
+        .verified-badge {
+            background: var(--blue);
+            color: #fff;
+            width: 16px; height: 16px;
+            border-radius: 50%;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 9px;
+            position: absolute;
+            bottom: -2px;
+            right: -2px;
+        }
+
+        .form-container {
+            background: var(--card);
+            border-radius: var(--radius);
+            padding: 24px;
+            max-width: 500px;
+            margin: 20px auto;
+            border: 1px solid var(--border);
+        }
+        .form-container h2 { text-align: center; margin-bottom: 16px; font-size: 18px; }
+        .form-group { margin-bottom: 12px; }
+        .form-group label { display: block; font-weight: 700; margin-bottom: 4px; font-size: 12px; color: var(--text2); }
+        .form-group input,
+        .form-group select,
+        .form-group textarea {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            background: var(--bg);
+            color: #fff;
+            font-size: 13px;
+            outline: none;
+            font-family: var(--font);
+        }
+        .form-group input:focus,
+        .form-group select:focus,
+        .form-group textarea:focus { border-color: var(--red); }
+        .form-group textarea { resize: vertical; min-height: 80px; }
+        .btn-submit {
+            width: 100%;
+            padding: 12px;
+            background: var(--red);
+            color: #fff;
+            border: none;
+            border-radius: 8px;
+            font-size: 14px;
+            font-weight: 700;
+            cursor: pointer;
+            margin-top: 8px;
+        }
+        .btn-submit:hover { background: #c0392b; }
+
+        .modal-overlay {
+            display: none;
+            position: fixed;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
+            background: rgba(0,0,0,0.8);
+            z-index: 2000;
+            justify-content: center;
+            align-items: center;
+            padding: 16px;
+        }
+        .modal-overlay.active { display: flex; }
+        .modal {
+            background: var(--card);
+            border-radius: var(--radius);
+            padding: 20px;
+            width: 100%;
+            max-width: 550px;
+            max-height: 85vh;
+            overflow-y: auto;
+            border: 1px solid var(--border);
+            position: relative;
+        }
+        .modal-close {
+            position: absolute;
+            top: 10px; right: 14px;
+            background: none;
+            border: none;
+            color: #fff;
+            font-size: 20px;
+            cursor: pointer;
+        }
+        .modal-avatar {
+            width: 56px; height: 56px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 900;
+            font-size: 22px;
+            margin-bottom: 10px;
+            background-size: cover;
+            background-position: center;
+        }
+        .modal h3 { font-size: 16px; margin-bottom: 4px; }
+        .modal .modal-server { color: var(--text2); font-size: 12px; margin-bottom: 10px; }
+        .modal .modal-desc {
+            background: var(--bg);
+            padding: 12px;
+            border-radius: 8px;
+            font-size: 13px;
+            line-height: 1.5;
+            color: var(--text2);
+            margin-bottom: 12px;
+        }
+        .modal-row {
+            display: flex;
+            justify-content: space-between;
+            padding: 6px 0;
+            border-bottom: 1px solid var(--border);
+            font-size: 12px;
+        }
+        .modal-row span:first-child { color: var(--text3); }
+        .btn-modal-contact {
+            width: 100%;
+            padding: 10px;
+            background: var(--green);
+            color: #fff;
+            border: none;
+            border-radius: 8px;
+            font-weight: 700;
+            cursor: pointer;
+            margin-top: 12px;
+        }
+
+        .admin-panel {
+            background: var(--card);
+            border-radius: var(--radius);
+            padding: 20px;
+            border: 1px solid var(--red);
+        }
+        .admin-panel h2 { font-size: 20px; margin-bottom: 16px; color: var(--red); }
+        .admin-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 12px; }
+        .admin-card {
+            background: var(--bg);
+            border-radius: 8px;
+            padding: 14px;
+            border: 1px solid var(--border);
+        }
+        .admin-card h4 { font-size: 13px; margin-bottom: 8px; color: var(--yellow); }
+        .admin-card .stat-big { font-size: 28px; font-weight: 900; color: var(--red); }
+        .admin-card .stat-label { font-size: 11px; color: var(--text3); }
+
+        .toast {
+            position: fixed;
+            bottom: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: var(--red);
+            color: #fff;
+            padding: 10px 20px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 700;
+            z-index: 9999;
+            display: none;
+            box-shadow: var(--shadow);
+        }
+
+        .star-rating { display: flex; gap: 2px; }
+        .star-rating .star { color: #444; font-size: 16px; cursor: pointer; transition: 0.2s; }
+        .star-rating .star.active { color: var(--gold); }
+
+        .badge-icon {
+            display: inline-block;
+            padding: 4px 8px;
+            border-radius: 12px;
+            font-size: 10px;
+            font-weight: 700;
+            margin: 2px;
+        }
+
+        .profile-banner {
+            width: 100%;
+            height: 120px;
+            border-radius: var(--radius);
+            background: var(--card2);
+            background-size: cover;
+            background-position: center;
+            margin-bottom: 12px;
+        }
+
+        .leaderboard-item {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 10px;
+            border-bottom: 1px solid var(--border);
+        }
+        .leaderboard-rank {
+            width: 28px; height: 28px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 900;
+            font-size: 13px;
+        }
+        .rank-1 { background: #ffd700; color: #000; }
+        .rank-2 { background: #c0c0c0; color: #000; }
+        .rank-3 { background: #cd7f32; color: #fff; }
+
+        .chat-container {
+            background: var(--card);
+            border-radius: var(--radius);
+            border: 1px solid var(--border);
+            height: 300px;
+            display: flex;
+            flex-direction: column;
+        }
+        .chat-messages {
+            flex: 1;
+            overflow-y: auto;
+            padding: 10px;
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+        }
+        .chat-msg {
+            background: var(--bg);
+            padding: 8px 12px;
+            border-radius: 12px;
+            font-size: 12px;
+            max-width: 80%;
+            align-self: flex-start;
+        }
+        .chat-msg.own { align-self: flex-end; background: var(--red); }
+        .chat-input-row { display: flex; gap: 6px; padding: 10px; border-top: 1px solid var(--border); }
+        .chat-input-row input {
+            flex: 1;
+            padding: 8px;
+            border-radius: 20px;
+            border: 1px solid var(--border);
+            background: var(--bg);
+            color: #fff;
+            font-size: 12px;
+            outline: none;
+        }
+
+        .footer {
+            text-align: center;
+            padding: 20px;
+            color: var(--text3);
+            font-size: 10px;
+            border-top: 1px solid var(--border);
+            margin-top: 40px;
+        }
+
+        .role-badge { padding: 4px 10px; border-radius: 20px; font-size: 10px; font-weight: 700; }
+        .rb-curator { background: #3d0000; color: #ff4444; border: 1px solid #ff4444; }
+        .rb-deputy { background: #3d2000; color: #ffa500; }
+        .rb-chief { background: #3d3000; color: #f1c40f; }
+        .rb-senior { background: #001a3d; color: #3498db; }
+        .rb-admin { background: #3d0000; color: #e74c3c; }
+        .rb-technical { background: #003d3d; color: #00bcd4; }
+        .rb-moderator { background: #003d1a; color: #2ecc71; }
+        .rb-writer { background: #1a003d; color: #9b59b6; }
+        .rb-player { background: #1a1a1a; color: #aaa; }
+
+        .announcement {
+            background: var(--card);
+            border-left: 4px solid var(--yellow);
+            padding: 12px;
+            border-radius: 0 8px 8px 0;
+            margin-bottom: 16px;
+            font-size: 12px;
+        }
+        .announcement strong { color: var(--yellow); }
+
+        .event-card {
+            background: var(--card);
+            border-radius: var(--radius);
+            padding: 12px;
+            border: 1px solid var(--blue);
+            margin-bottom: 8px;
+        }
+
+        .log-viewer {
+            background: #000;
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            padding: 12px;
+            max-height: 400px;
+            overflow-y: auto;
+            font-family: 'Courier New', monospace;
+            font-size: 11px;
+            color: #0f0;
+        }
+        .log-entry { padding: 2px 0; border-bottom: 1px solid #111; }
+        .log-entry .log-time { color: #888; }
+        .log-entry .log-type { color: var(--yellow); }
+        .log-entry .log-user { color: var(--blue); }
+        .log-entry .log-action { color: #0f0; }
+        .log-entry .log-detail { color: #fff; }
+
+        @media (max-width: 768px) {
+            .navbar { padding: 8px 12px; }
+            .logo { font-size: 16px; }
+            .btn { padding: 6px 10px; font-size: 10px; }
+            .hero h1 { font-size: 18px; }
+            .tab-btn { padding: 8px 10px; font-size: 10px; }
+            .listing-header { flex-direction: column; align-items: flex-start; }
+            .admin-grid { grid-template-columns: 1fr; }
+            .profile-banner { height: 80px; }
+        }
+    </style>
+</head>
+<body>
+
+    <nav class="navbar">
+        <a href="#" class="logo" onclick="navigateTo('home')">
+            <div class="logo-icon">🎮</div>
+            Ekip<span>Bul</span>
+        </a>
+        <div class="nav-actions" id="navActions"></div>
+    </nav>
+
+    <div class="hero">
+        <h1>Ekip<span>Bul</span></h1>
+        <p>RP Grand Mobile için ekip arkadaşını bul</p>
+    </div>
+    <div class="container" id="dynamicContent"></div>
+
+    <div class="toast" id="toast"></div>
+    <div class="footer">© 2026 EkipBul · ekipbul.onrender.com</div>
+
+    <script>
+        // ==================== LOG SİSTEMİ ====================
+        const LOG_KEY = 'ekipbul_logs';
+        let LOGS = JSON.parse(localStorage.getItem(LOG_KEY)) || [];
+
+        function saveLogs() {
+            try {
+                localStorage.setItem(LOG_KEY, JSON.stringify(LOGS));
+            } catch (e) {
+                LOGS = LOGS.slice(-500);
+                localStorage.setItem(LOG_KEY, JSON.stringify(LOGS));
+            }
+        }
+
+        function addLog(type, user, action, detail) {
+            const entry = {
+                id: 'log_' + Date.now() + '_' + Math.random().toString(36).substr(2, 5),
+                time: new Date().toISOString(),
+                type: type,
+                user: user || 'Sistem',
+                action: action,
+                detail: detail || ''
+            };
+            LOGS.push(entry);
+            if (LOGS.length > 1000) LOGS = LOGS.slice(-1000);
+            saveLogs();
+            return entry;
+        }
+
+        function exportLogs() {
+            let text = 'EKİPBUL LOG KAYITLARI\n';
+            text += '=' .repeat(60) + '\n';
+            text += 'Tarih: ' + new Date().toLocaleString('tr-TR') + '\n';
+            text += 'Toplam Kayıt: ' + LOGS.length + '\n';
+            text += '=' .repeat(60) + '\n\n';
+
+            LOGS.forEach(log => {
+                text += '[' + new Date(log.time).toLocaleString('tr-TR') + '] ';
+                text += '[' + log.type + '] ';
+                text += 'Kullanıcı: ' + log.user + ' | ';
+                text += 'İşlem: ' + log.action;
+                if (log.detail) text += ' | Detay: ' + log.detail;
+                text += '\n';
+            });
+
+            const blob = new Blob([text], { type: 'text/plain;charset=utf-8' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = 'ekipbul_log_' + new Date().toISOString().slice(0, 10) + '.txt';
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            URL.revokeObjectURL(url);
+            addLog('SİSTEM', currentUser ? currentUser.username : 'Sistem', 'LOG İNDİRME', 'Log dosyası indirildi');
+            showToast('📥 log.txt indirildi!');
+        }
+
+        function viewLogs(content) {
+            const logs = [...LOGS].reverse().slice(0, 200);
+            content.innerHTML = `
+                <h2 style="margin-bottom:16px;">📋 Sistem Logları</h2>
+                <div style="display:flex;gap:8px;margin-bottom:12px;flex-wrap:wrap;">
+                    <button class="btn btn-blue" onclick="exportLogs()">📥 log.txt İndir</button>
+                    <button class="btn btn-red btn-sm" onclick="clearLogs()">🗑️ Temizle</button>
+                    <button class="btn btn-outline btn-sm" onclick="navigateTo('home')">← Ana Sayfa</button>
+                </div>
+                <div class="log-viewer">
+                    ${logs.length === 0 ? '<p style="color:#888;">Henüz log kaydı yok.</p>' : ''}
+                    ${logs.map(log => `
+                        <div class="log-entry">
+                            <span class="log-time">[${new Date(log.time).toLocaleString('tr-TR')}]</span>
+                            <span class="log-type">[${log.type}]</span>
+                            <span class="log-user">${log.user}</span> →
+                            <span class="log-action">${log.action}</span>
+                            ${log.detail ? '<span class="log-detail">(' + log.detail + ')</span>' : ''}
+                        </div>
+                    `).join('')}
+                </div>
+            `;
+        }
+
+        function clearLogs() {
+            if (confirm('Tüm log kayıtları silinecek. Emin misiniz?')) {
+                LOGS = [];
+                saveLogs();
+                showToast('🗑️ Loglar temizlendi!');
+                const content = document.getElementById('dynamicContent');
+                if (content) viewLogs(content);
+            }
+        }
+
+        // ==================== VERİTABANI ====================
+        const DB_KEY = 'ekipbul_db';
+        let DB = JSON.parse(localStorage.getItem(DB_KEY));
+
+        const DEFAULT_DB = {
+            users: [{
+                id: 'admin_001',
+                email: 'kyzenbaba78@gmail.com',
+                password: '123456&Hack',
+                username: 'FLEX OTTOMAN',
+                discord: 'FlexOttoman',
+                role: 'Curator of the Project',
+                isPremium: true,
+                isBanned: false,
+                isVerified: true,
+                createdAt: new Date().toISOString(),
+                avatarColor: 'av-red',
+                avatarLetter: 'F',
+                avatarURL: '',
+                bannerURL: '',
+                gameHours: '5000+',
+                bio: 'Site Kurucusu 👑',
+                badges: ['founder', 'premium', 'verified'],
+                rating: 5,
+                ratingCount: 1,
+                inviteCode: 'FLEX001',
+                invitedBy: null,
+                inviteCount: 0
+            }],
+            listings: [],
+            announcements: [],
+            events: [],
+            chatMessages: [],
+            notifications: [],
+            siteName: 'EkipBul',
+            totalViews: 0,
+            onlineUsers: []
+        };
+
+        if (!DB || !DB.users || !Array.isArray(DB.users)) {
+            DB = JSON.parse(JSON.stringify(DEFAULT_DB));
+            saveDB();
+            addLog('SİSTEM', 'Sistem', 'VERİTABANI OLUŞTURMA', 'Varsayılan DB oluşturuldu');
+        }
+
+        function saveDB() {
+            try {
+                localStorage.setItem(DB_KEY, JSON.stringify(DB));
+            } catch (e) {
+                console.error('DB kaydetme hatası:', e);
+            }
+        }
+
+        // ==================== ROL HİYERARŞİSİ ====================
+        const ROLE_HIERARCHY = [
+            'Curator of the Project',
+            'Deputy Curator of the Project',
+            'Chief Admin',
+            'Senior Admin',
+            'Admin',
+            'Technical Admin',
+            'Moderator',
+            'Yazıcı',
+            'Player'
+        ];
+
+        const ROLE_COLORS = {
+            'Curator of the Project': { color: '#ff4444', class: 'rb-curator', dot: '#ff4444', icon: '👑' },
+            'Deputy Curator of the Project': { color: '#ffa500', class: 'rb-deputy', dot: '#ffa500', icon: '🏅' },
+            'Chief Admin': { color: '#f1c40f', class: 'rb-chief', dot: '#f1c40f', icon: '⭐' },
+            'Senior Admin': { color: '#3498db', class: 'rb-senior', dot: '#3498db', icon: '💎' },
+            'Admin': { color: '#e74c3c', class: 'rb-admin', dot: '#e74c3c', icon: '🔴' },
+            'Technical Admin': { color: '#00bcd4', class: 'rb-technical', dot: '#00bcd4', icon: '🔧' },
+            'Moderator': { color: '#2ecc71', class: 'rb-moderator', dot: '#2ecc71', icon: '🛡️' },
+            'Yazıcı': { color: '#9b59b6', class: 'rb-writer', dot: '#9b59b6', icon: '✍️' },
+            'Player': { color: '#aaa', class: 'rb-player', dot: '#aaa', icon: '🎮' }
+        };
+
+        const ROLE_PERMISSIONS = {
+            'Curator of the Project': ['all', 'manage_roles', 'manage_users', 'ban_users', 'delete_listings', 'post_announcements', 'give_premium', 'verify_users', 'manage_events', 'view_stats', 'site_settings', 'delete_any', 'promote_demote', 'view_logs'],
+            'Deputy Curator of the Project': ['manage_users', 'ban_users', 'delete_listings', 'post_announcements', 'give_premium', 'verify_users', 'manage_events', 'view_stats', 'delete_any', 'view_logs'],
+            'Chief Admin': ['manage_users', 'ban_users', 'delete_listings', 'post_announcements', 'give_premium', 'verify_users', 'view_stats', 'view_logs'],
+            'Senior Admin': ['ban_users', 'delete_listings', 'post_announcements', 'give_premium', 'view_stats'],
+            'Admin': ['delete_listings', 'post_announcements', 'view_stats'],
+            'Technical Admin': ['site_settings', 'view_stats', 'delete_listings', 'view_logs'],
+            'Moderator': ['delete_listings', 'view_stats'],
+            'Yazıcı': ['post_announcements', 'manage_events'],
+            'Player': []
+        };
+
+        let currentUser = null;
+
+        function hasPermission(perm) {
+            if (!currentUser) return false;
+            const perms = ROLE_PERMISSIONS[currentUser.role] || [];
+            return perms.includes('all') || perms.includes(perm);
+        }
+
+        function getRoleLevel(role) { return ROLE_HIERARCHY.indexOf(role); }
+        function canModifyRole(targetRole) {
+            if (!currentUser) return false;
+            return getRoleLevel(currentUser.role) < getRoleLevel(targetRole);
+        }
+
+        function loadSession() {
+            try {
+                const sessionData = JSON.parse(localStorage.getItem('ekipbul_session'));
+                if (sessionData && sessionData.id) {
+                    const dbUser = DB.users.find(u => u.id === sessionData.id);
+                    if (dbUser && !dbUser.isBanned) {
+                        currentUser = { ...dbUser, password: undefined };
+                        return;
+                    }
+                }
+            } catch (e) {}
+            currentUser = null;
+        }
+
+        function saveSession() {
+            if (currentUser) {
+                const sessionData = {
+                    id: currentUser.id,
+                    email: currentUser.email,
+                    username: currentUser.username,
+                    role: currentUser.role,
+                    isPremium: currentUser.isPremium,
+                    isVerified: currentUser.isVerified,
+                    avatarColor: currentUser.avatarColor,
+                    avatarLetter: currentUser.avatarLetter,
+                    avatarURL: currentUser.avatarURL,
+                    discord: currentUser.discord
+                };
+                localStorage.setItem('ekipbul_session', JSON.stringify(sessionData));
+            }
+        }
+
+        function refreshCurrentUser() {
+            if (!currentUser) return;
+            const dbUser = DB.users.find(u => u.id === currentUser.id);
+            if (dbUser && !dbUser.isBanned) {
+                currentUser = { ...dbUser, password: undefined };
+                saveSession();
+            } else {
+                currentUser = null;
+                localStorage.removeItem('ekipbul_session');
+            }
+        }
+
+        const BADGES = {
+            'founder': { name: 'Kurucu', icon: '👑', color: '#ffd700' },
+            'premium': { name: 'Premium', icon: '⭐', color: '#f1c40f' },
+            'verified': { name: 'Onaylı', icon: '✓', color: '#3498db' },
+            'veteran': { name: 'Veteran', icon: '🎖️', color: '#e74c3c' },
+            'inviter5': { name: '5 Davet', icon: '📨', color: '#2ecc71' },
+            'inviter10': { name: '10 Davet', icon: '📬', color: '#9b59b6' },
+            'inviter25': { name: '25 Davet', icon: '📦', color: '#ffa500' },
+            'toprated': { name: 'En İyi', icon: '💎', color: '#00bcd4' }
+        };
+
+        function getBadgeHTML(badgeKey) {
+            const b = BADGES[badgeKey];
+            return b ? `<span class="badge-icon" style="background:${b.color}20;color:${b.color};border:1px solid ${b.color};">${b.icon} ${b.name}</span>` : '';
+        }
+
+        function checkInviteBadges(user) {
+            const newBadges = [...(user.badges || [])];
+            if (user.inviteCount >= 25 && !newBadges.includes('inviter25')) newBadges.push('inviter25');
+            else if (user.inviteCount >= 10 && !newBadges.includes('inviter10')) newBadges.push('inviter10');
+            else if (user.inviteCount >= 5 && !newBadges.includes('inviter5')) newBadges.push('inviter5');
+            user.badges = newBadges;
+        }
+
+        function updateOnlineStatus() {
+            if (currentUser && DB.onlineUsers) {
+                if (!DB.onlineUsers.includes(currentUser.id)) {
+                    DB.onlineUsers.push(currentUser.id);
+                    addLog('ONLINE', currentUser.username, 'GİRİŞ', 'Siteye giriş yaptı');
+                }
+                DB.onlineUsers = DB.onlineUsers.filter(uid => DB.users.some(u => u.id === uid && !u.isBanned));
+                saveDB();
+            }
+        }
+
+        function updateNavbar() {
+            const nav = document.getElementById('navActions');
+            if (!nav) return;
+            if (currentUser) {
+                const rc = ROLE_COLORS[currentUser.role] || ROLE_COLORS['Player'];
+                const notifCount = (DB.notifications || []).filter(n => n.userId === currentUser.id && !n.read).length;
+                nav.innerHTML = `
+                    <button class="btn btn-outline" style="position:relative;" onclick="navigateTo('notifications')">🔔 ${notifCount > 0 ? '<span style="background:var(--red);color:#fff;border-radius:50%;padding:2px 6px;font-size:10px;position:absolute;top:-6px;right:-6px;">' + notifCount + '</span>' : ''}</button>
+                    <span class="user-badge" onclick="navigateTo('profile','${currentUser.id}')">
+                        <span class="role-dot" style="background:${rc.dot}"></span>
+                        <span style="color:${rc.color}">${currentUser.username}</span>
+                        ${currentUser.isVerified ? '<span style="color:var(--blue);">✓</span>' : ''}
+                        <span class="role-badge ${rc.class}">${rc.icon} ${currentUser.role}</span>
+                    </span>
+                    ${hasPermission('view_stats') ? '<button class="btn btn-gold" onclick="navigateTo(\'admin\')">👑 Panel</button>' : ''}
+                    <button class="btn btn-red" onclick="navigateTo('create-listing')">📝 İlan Ver</button>
+                    <button class="btn btn-outline" onclick="logout()">Çıkış</button>
+                `;
+            } else {
+                nav.innerHTML = `
+                    <button class="btn btn-outline" onclick="navigateTo('login')">Giriş</button>
+                    <button class="btn btn-red" onclick="navigateTo('register')">Kayıt Ol</button>
+                `;
+            }
+        }
+
+        function navigateTo(page, data) {
+            refreshCurrentUser();
+            updateOnlineStatus();
+            const content = document.getElementById('dynamicContent');
+            if (!content) return;
+            updateNavbar();
+
+            switch (page) {
+                case 'home': renderHome(content); break;
+                case 'login': renderLogin(content); break;
+                case 'register': renderRegister(content); break;
+                case 'create-listing':
+                    if (!currentUser) { showToast('⚠️ Önce giriş yap!'); renderLogin(content); return; }
+                    renderCreateListing(content); break;
+                case 'admin':
+                    if (!hasPermission('view_stats')) { showToast('⚠️ Yetkisiz!'); renderHome(content); return; }
+                    renderAdminPanel(content); break;
+                case 'profile': renderProfile(content, data); break;
+                case 'leaderboard': renderLeaderboard(content); break;
+                case 'chat': renderChat(content); break;
+                case 'events': renderEvents(content); break;
+                case 'notifications': renderNotifications(content); break;
+                case 'logs':
+                    if (!hasPermission('view_logs')) { showToast('⚠️ Yetkisiz!'); renderHome(content); return; }
+                    viewLogs(content); break;
+                default: renderHome(content);
+            }
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        function showPage(page, data) { navigateTo(page, data); }
+        function showProfile(userId) { navigateTo('profile', userId); }
+        function showNotifications() { navigateTo('notifications'); }
+        function showAdminPanel() { navigateTo('admin'); }
+
+        // ==================== ANA SAYFA ====================
+        function renderHome(content) {
+            const listings = (DB.listings || []).filter(l => !l.deleted).sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
+            const allListings = [...listings.filter(l => l.isPremium), ...listings.filter(l => !l.isPremium)];
+
+            let annHTML = '';
+            if (DB.announcements && DB.announcements.length > 0) {
+                const lastAnn = DB.announcements[DB.announcements.length - 1];
+                annHTML = '<div class="announcement"><strong>📢 Duyuru:</strong> ' + lastAnn.text + ' <span style="color:var(--text3);font-size:10px;">- ' + new Date(lastAnn.date).toLocaleString('tr-TR') + '</span></div>';
+            }
+
+            content.innerHTML = annHTML + `
+                <div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:12px;">
+                    <button class="btn btn-outline btn-sm" onclick="navigateTo('leaderboard')">🏆 Liderlik</button>
+                    <button class="btn btn-outline btn-sm" onclick="navigateTo('chat')">💬 Sohbet</button>
+                    <button class="btn btn-outline btn-sm" onclick="navigateTo('events')">📅 Etkinlikler</button>
+                </div>
+                <div class="tabs">
+                    <button class="tab-btn active" onclick="filterHomeTab('all', this)">Tümü (` + allListings.length + `)</button>
+                    <button class="tab-btn" onclick="filterHomeTab('lfm', this)">Aranan</button>
+                    <button class="tab-btn" onclick="filterHomeTab('lfg', this)">Arıyor</button>
+                    <button class="tab-btn" onclick="filterHomeTab('premium', this)">⭐ Premium</button>
+                </div>
+                <input type="text" placeholder="🔍 Detaylı ara..." id="searchInput" style="width:100%;padding:10px;border-radius:8px;background:var(--card);border:1px solid var(--border);color:#fff;margin-bottom:12px;font-size:13px;" oninput="searchListings()">
+                <div class="listings" id="homeListings"></div>
+                <div style="text-align:center;margin-top:16px;">
+                    <button class="btn btn-outline" onclick="loadMoreHome()">Daha Fazla</button>
+                </div>
+            `;
+
+            window._homeListings = allListings;
+            window._homeFilter = 'all';
+            window._homePage = 1;
+            window._homeSearch = '';
+            renderHomeListings();
+        }
+
+        function renderHomeListings() {
+            const container = document.getElementById('homeListings');
+            if (!container) return;
+
+            let data = window._homeListings || [];
+            if (window._homeFilter === 'lfm') data = data.filter(l => l.type === 'lfm');
+            if (window._homeFilter === 'lfg') data = data.filter(l => l.type === 'lfg');
+            if (window._homeFilter === 'premium') data = data.filter(l => l.isPremium);
+            if (window._homeSearch) {
+                const s = window._homeSearch.toLowerCase();
+                data = data.filter(l =>
+                    l.title.toLowerCase().includes(s) ||
+                    l.description.toLowerCase().includes(s) ||
+                    l.server.toLowerCase().includes(s) ||
+                    l.category.toLowerCase().includes(s)
+                );
+            }
+
+            const perPage = 10;
+            const page = window._homePage || 1;
+            const slice = data.slice(0, page * perPage);
+
+            container.innerHTML = slice.map(l => {
+                const author = DB.users.find(u => u.id === l.authorId);
+                const rc = author ? ROLE_COLORS[author.role] || ROLE_COLORS['Player'] : ROLE_COLORS['Player'];
+                const avStyle = author && author.avatarURL ? 'background-image:url(' + author.avatarURL + ');color:transparent;' : '';
+
+                let cardHTML = '<div class="listing-card ' + (l.isPremium ? 'premium' : '') + '" onclick="viewListing(\'' + l.id + '\')">';
+                if (l.isPremium) cardHTML += '<div style="position:absolute;top:8px;right:8px;font-size:14px;">⭐</div>';
+                cardHTML += '<div class="listing-header">';
+                cardHTML += '<div class="listing-avatar ' + (author ? author.avatarColor : 'av-red') + '" style="' + avStyle + '">' + (avStyle ? '' : (author ? author.avatarLetter : '?')) + '</div>';
+                cardHTML += '<div class="listing-title">' + l.title + '</div></div>';
+                cardHTML += '<div class="listing-meta"><span>👤 ' + (author ? author.username : '?') + ' ' + (author && author.isVerified ? '✓' : '') + '</span><span style="color:' + rc.color + '">' + rc.icon + ' ' + (author ? author.role : 'Player') + '</span><span>🕐 ' + timeAgo(l.createdAt) + '</span><span>🌐 ' + l.server + '</span></div>';
+                cardHTML += '<div class="listing-tags"><span class="tag ' + (l.type === 'lfm' ? 'tag-lfm' : 'tag-lfg') + '">' + (l.type === 'lfm' ? 'Aranan (LFM)' : 'Arıyor (LFG)') + '</span><span class="tag tag-server">' + l.server + '</span>' + (l.isPremium ? '<span class="tag tag-premium">Premium</span>' : '') + '</div>';
+                cardHTML += '<div class="listing-action"><button class="btn btn-blue btn-sm" onclick="event.stopPropagation();contactListing(\'' + l.id + '\')">📩 İletişim</button><span class="listing-views">👁 ' + (l.views || 0) + '</span></div></div>';
+                return cardHTML;
+            }).join('');
+        }
+
+        function filterHomeTab(tab, btn) {
+            window._homeFilter = tab; window._homePage = 1;
+            document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+            btn.classList.add('active');
+            renderHomeListings();
+        }
+
+        function searchListings() {
+            window._homeSearch = document.getElementById('searchInput')?.value || '';
+            window._homePage = 1;
+            renderHomeListings();
+        }
+
+        function loadMoreHome() { window._homePage++; renderHomeListings(); }
+
+        function viewListing(id) {
+            const listing = (DB.listings || []).find(l => l.id === id);
+            if (!listing || listing.deleted) return;
+            listing.views = (listing.views || 0) + 1;
+            DB.totalViews = (DB.totalViews || 0) + 1;
+            saveDB();
+            addLog('İLAN', currentUser ? currentUser.username : 'Ziyaretçi', 'İLAN GÖRÜNTÜLEME', listing.title);
+
+            const author = DB.users.find(u => u.id === listing.authorId);
+            const rc = author ? ROLE_COLORS[author.role] || ROLE_COLORS['Player'] : ROLE_COLORS['Player'];
+            const avStyle = author && author.avatarURL ? 'background-image:url(' + author.avatarURL + ');color:transparent;' : '';
+
+            const overlay = document.createElement('div');
+            overlay.className = 'modal-overlay active';
+            overlay.innerHTML = `
+                <div class="modal">
+                    <button class="modal-close" onclick="this.closest('.modal-overlay').remove()">✕</button>
+                    <div class="modal-avatar ${author ? author.avatarColor : 'av-red'}" style="${avStyle}">${avStyle ? '' : (author ? author.avatarLetter : '?')}</div>
+                    <h3>${listing.title}</h3>
+                    <p class="modal-server">👤 ${author ? author.username : '?'} ${author && author.isVerified ? '✓' : ''} · <span style="color:${rc.color}">${rc.icon} ${author ? author.role : '?'}</span> · 🌐 ${listing.server} · 🕐 ${timeAgo(listing.createdAt)}</p>
+                    <div class="modal-desc">${listing.description}</div>
+                    <div class="modal-row"><span>İlan Türü</span><span>${listing.type === 'lfm' ? 'Aranan (LFM)' : 'Arıyor (LFG)'}</span></div>
+                    <div class="modal-row"><span>Kategori</span><span>${listing.category}</span></div>
+                    <div class="modal-row"><span>Discord</span><span>${listing.discord}</span></div>
+                    <div class="modal-row"><span>Oyun Süresi</span><span>${listing.gameHours}</span></div>
+                    <div class="modal-row"><span>Görüntülenme</span><span>${listing.views}</span></div>
+                    <div class="modal-row"><span>Puan</span><span>${'⭐'.repeat(Math.round(author ? author.rating || 0 : 0))} (${author ? author.ratingCount || 0 : 0} oy)</span></div>
+                    <button class="btn-modal-contact" onclick="copyDiscord('${listing.discord}')">💬 Discord'u Kopyala</button>
+                    ${hasPermission('delete_listings') ? '<button class="btn btn-red" style="width:100%;margin-top:8px;" onclick="deleteListing(\'' + listing.id + '\');this.closest(\'.modal-overlay\').remove();">🗑️ İlanı Sil</button>' : ''}
+                </div>`;
+            document.body.appendChild(overlay);
+            overlay.addEventListener('click', function(e) { if (e.target === overlay) overlay.remove(); });
+        }
+
+        function contactListing(id) {
+            const listing = (DB.listings || []).find(l => l.id === id);
+            if (listing) {
+                copyDiscord(listing.discord);
+                addLog('İLETİŞİM', currentUser.username, 'DISCORD KOPYALAMA', listing.discord);
+            }
+        }
+
+        function copyDiscord(discord) {
+            navigator.clipboard.writeText(discord).then(() => showToast('✅ Discord: ' + discord)).catch(() => showToast('📋 Discord: ' + discord));
+        }
+
+        function deleteListing(id) {
+            const listing = (DB.listings || []).find(l => l.id === id);
+            if (listing) {
+                listing.deleted = true;
+                addLog('MODERASYON', currentUser.username, 'İLAN SİLME', listing.title);
+                saveDB();
+                showToast('🗑️ Silindi');
+                navigateTo('home');
+            }
+        }
+
+        // ==================== GİRİŞ / KAYIT ====================
+        function renderLogin(content) {
+            content.innerHTML = '<div class="form-container"><h2>🔐 Giriş Yap</h2><div class="form-group"><label>E-posta</label><input type="email" id="loginEmail" placeholder="ornek@mail.com"></div><div class="form-group"><label>Şifre</label><input type="password" id="loginPass" placeholder="********"></div><button class="btn-submit" onclick="login()">Giriş Yap</button><p style="text-align:center;margin-top:10px;font-size:12px;">Hesabın yok mu? <a href="#" style="color:var(--red);" onclick="navigateTo(\'register\')">Kayıt Ol</a></p></div>';
+        }
+
+        function login() {
+            const email = document.getElementById('loginEmail')?.value.trim().toLowerCase();
+            const pass = document.getElementById('loginPass')?.value;
+            if (!email || !pass) { showToast('⚠️ Tüm alanları doldur!'); return; }
+            const user = DB.users.find(u => u.email === email && u.password === pass);
+            if (!user) { showToast('❌ Hatalı!'); addLog('HATA', 'Sistem', 'BAŞARISIZ GİRİŞ', email); return; }
+            if (user.isBanned) { showToast('🚫 Yasaklısın!'); addLog('GÜVENLİK', 'Sistem', 'YASAKLI GİRİŞ DENEMESİ', user.username); return; }
+            currentUser = { ...user, password: undefined };
+            saveSession();
+            updateOnlineStatus();
+            addLog('OTURUM', user.username, 'GİRİŞ', user.role);
+            showToast('✅ Hoş geldin, ' + user.username + '!');
+            navigateTo('home');
+        }
+
+        function logout() {
+            if (currentUser) {
+                addLog('OTURUM', currentUser.username, 'ÇIKIŞ', currentUser.role);
+                if (DB.onlineUsers) {
+                    DB.onlineUsers = DB.onlineUsers.filter(uid => uid !== currentUser.id);
+                    saveDB();
+                }
+            }
+            currentUser = null;
+            localStorage.removeItem('ekipbul_session');
+            showToast('👋 Çıkış yapıldı');
+            navigateTo('home');
+        }
+
+        function renderRegister(content) {
+            content.innerHTML = '<div class="form-container"><h2>📋 Kayıt Ol</h2><div class="form-group"><label>Kullanıcı Adı</label><input type="text" id="regUser" placeholder="Nick"></div><div class="form-group"><label>E-posta</label><input type="email" id="regEmail" placeholder="ornek@mail.com"></div><div class="form-group"><label>Discord</label><input type="text" id="regDiscord" placeholder="kullanici#1234"></div><div class="form-group"><label>Şifre</label><input type="password" id="regPass" placeholder="********"></div><div class="form-group"><label>Davet Kodu (varsa)</label><input type="text" id="regInvite" placeholder="isteğe bağlı"></div><button class="btn-submit" onclick="register()">Kayıt Ol</button><p style="text-align:center;margin-top:10px;font-size:12px;">Hesabın var mı? <a href="#" style="color:var(--red);" onclick="navigateTo(\'login\')">Giriş Yap</a></p></div>';
+        }
+
+        function register() {
+            const username = document.getElementById('regUser')?.value.trim();
+            const email = document.getElementById('regEmail')?.value.trim().toLowerCase();
+            const discord = document.getElementById('regDiscord')?.value.trim();
+            const pass = document.getElementById('regPass')?.value;
+            const inviteCode = document.getElementById('regInvite')?.value.trim();
+            if (!username || !email || !discord || !pass) { showToast('⚠️ Tüm alanları doldur!'); return; }
+            if (DB.users.find(u => u.email === email)) { showToast('⚠️ Kayıtlı!'); return; }
+            if (pass.length < 6) { showToast('⚠️ Şifre en az 6 karakter!'); return; }
+            const avColors = ['av-red', 'av-blue', 'av-green', 'av-gold', 'av-purple'];
+            const newUser = {
+                id: 'user_' + Date.now(), email, password: pass, username, discord,
+                role: 'Player', isPremium: false, isBanned: false, isVerified: false,
+                createdAt: new Date().toISOString(),
+                avatarColor: avColors[Math.floor(Math.random() * avColors.length)],
+                avatarLetter: username.charAt(0).toUpperCase(),
+                avatarURL: '', bannerURL: '', gameHours: '0', bio: '',
+                badges: [], rating: 0, ratingCount: 0,
+                inviteCode: username.substring(0, 4).toUpperCase() + Math.floor(Math.random() * 900 + 100),
+                invitedBy: null, inviteCount: 0
+            };
+            if (inviteCode) {
+                const inviter = DB.users.find(u => u.inviteCode === inviteCode && u.id !== newUser.id);
+                if (inviter) {
+                    newUser.invitedBy = inviter.id;
+                    inviter.inviteCount = (inviter.inviteCount || 0) + 1;
+                    checkInviteBadges(inviter);
+                    addNotification(inviter.id, '🎉 ' + username + ' davet kodunla kayıt oldu!', 'profile');
+                    addLog('DAVET', inviter.username, 'DAVET KABUL', username);
+                }
+            }
+            DB.users.push(newUser);
+            saveDB();
+            addLog('KAYIT', username, 'YENİ KAYIT', email);
+            currentUser = { ...newUser, password: undefined };
+            saveSession();
+            updateOnlineStatus();
+            showToast('✅ Hoş geldin, ' + username + '!');
+            navigateTo('home');
+        }
+
+        // ==================== İLAN VER ====================
+        function renderCreateListing(content) {
+            if (!currentUser) return;
+            content.innerHTML = '<div class="form-container"><h2>📝 İlan Oluştur</h2><div class="form-group"><label>Başlık</label><input type="text" id="listTitle" placeholder="örn: Polis"></div><div class="form-group"><label>Kategori</label><select id="listCat"><option>Yasal Rol</option><option>Yasadışı Rol</option><option>Serbest Rol</option><option>Çete/Aile</option></select></div><div class="form-group"><label>Sunucu</label><select id="listServer"><option>RP Grand #1</option><option>RP Grand #2</option><option>RP Grand RP</option></select></div><div class="form-group"><label>Tür</label><select id="listType"><option value="lfm">Aranan</option><option value="lfg">Arıyor</option></select></div><div class="form-group"><label>Discord</label><input type="text" id="listDiscord" value="' + (currentUser.discord || '') + '"></div><div class="form-group"><label>Oyun Süresi</label><input type="text" id="listHours" placeholder="500+ saat"></div><div class="form-group"><label>Açıklama</label><textarea id="listDesc" placeholder="Detaylı..."></textarea></div><button class="btn-submit" onclick="createListing()">✅ Yayınla</button><button class="btn btn-outline" style="width:100%;margin-top:8px;" onclick="navigateTo(\'home\')">← Ana Sayfa</button></div>';
+        }
+
+        function createListing() {
+            const title = document.getElementById('listTitle')?.value.trim();
+            const cat = document.getElementById('listCat')?.value;
+            const server = document.getElementById('listServer')?.value;
+            const type = document.getElementById('listType')?.value;
+            const discord = document.getElementById('listDiscord')?.value.trim();
+            const hours = document.getElementById('listHours')?.value.trim();
+            const desc = document.getElementById('listDesc')?.value.trim();
+            if (!title || !discord || !desc) { showToast('⚠️ Başlık, Discord ve Açıklama zorunlu!'); return; }
+            if (!DB.listings) DB.listings = [];
+            DB.listings.push({
+                id: 'list_' + Date.now(), authorId: currentUser.id,
+                title, category: cat, server, type, discord, gameHours: hours, description: desc,
+                isPremium: currentUser.isPremium || hasPermission('give_premium'),
+                views: 0, deleted: false, createdAt: new Date().toISOString()
+            });
+            saveDB();
+            addLog('İLAN', currentUser.username, 'YENİ İLAN', title);
+            showToast('✅ Yayınlandı!');
+            navigateTo('home');
+        }
+
+        // ==================== PROFİL ====================
+        function renderProfile(content, userId) {
+            const uid = userId || (currentUser ? currentUser.id : null);
+            const user = DB.users.find(u => u.id === uid);
+            if (!user) { showToast('❌ Bulunamadı!'); return; }
+            const rc = ROLE_COLORS[user.role] || ROLE_COLORS['Player'];
+            const avStyle = user.avatarURL ? 'background-image:url(' + user.avatarURL + ');color:transparent;' : '';
+            const bannerStyle = user.bannerURL ? 'background-image:url(' + user.bannerURL + ');' : '';
+            const isOwn = currentUser && currentUser.id === user.id;
+
+            content.innerHTML = '<div class="admin-panel"><div class="profile-banner" style="' + bannerStyle + '"></div><div style="display:flex;align-items:center;gap:12px;flex-wrap:wrap;margin-bottom:12px;"><div class="modal-avatar ' + user.avatarColor + '" style="' + avStyle + ';position:relative;">' + (avStyle ? '' : user.avatarLetter) + (user.isVerified ? '<span class="verified-badge">✓</span>' : '') + '</div><div><h2 style="color:' + rc.color + '">' + rc.icon + ' ' + user.username + '</h2><span class="role-badge ' + rc.class + '">' + user.role + '</span> ' + (user.isPremium ? '⭐' : '') + ' ' + (user.isVerified ? '✓ Onaylı' : '') + '</div></div><div style="display:flex;gap:4px;flex-wrap:wrap;margin-bottom:12px;">' + (user.badges || []).map(b => getBadgeHTML(b)).join('') + '</div><div class="modal-row"><span>Discord</span><span>' + user.discord + '</span></div><div class="modal-row"><span>Oyun Süresi</span><span>' + user.gameHours + '</span></div><div class="modal-row"><span>Kayıt</span><span>' + new Date(user.createdAt).toLocaleDateString('tr-TR') + '</span></div><div class="modal-row"><span>Puan</span><span>' + '⭐'.repeat(Math.round(user.rating || 0)) + ' (' + (user.ratingCount || 0) + ')</span></div><div class="modal-row"><span>Davet</span><span>' + user.inviteCode + ' (' + (user.inviteCount || 0) + ')</span></div><p style="margin-top:10px;color:var(--text2);font-size:13px;">' + (user.bio || 'Biyografi yok.') + '</p>' + (!isOwn ? '<div style="margin-top:12px;"><p style="font-size:11px;color:var(--text3);">Puanla:</p><div class="star-rating" id="starRating">' + [1,2,3,4,5].map(i => '<span class="star" onclick="rateUser(\'' + user.id + '\',' + i + ')">★</span>').join('') + '</div></div>' : '<div style="margin-top:16px;"><h4>✏️ Düzenle</h4><div class="form-group"><label>Avatar URL</label><input type="text" id="editAvatar" value="' + (user.avatarURL || '') + '"></div><div class="form-group"><label>Banner URL</label><input type="text" id="editBanner" value="' + (user.bannerURL || '') + '"></div><div class="form-group"><label>Oyun Süresi</label><input type="text" id="editHours" value="' + user.gameHours + '"></div><div class="form-group"><label>Biyografi</label><textarea id="editBio">' + (user.bio || '') + '</textarea></div><button class="btn btn-red" style="width:100%;" onclick="saveProfile(\'' + user.id + '\')">Kaydet</button></div>') + '<button class="btn btn-outline" style="width:100%;margin-top:10px;" onclick="navigateTo(\'home\')">← Ana Sayfa</button></div>';
+        }
+
+        function rateUser(userId, r) {
+            if (!currentUser || currentUser.id === userId) return;
+            const u = DB.users.find(x => x.id === userId);
+            if (!u) return;
+            u.rating = ((u.rating || 0) * (u.ratingCount || 0) + r) / ((u.ratingCount || 0) + 1);
+            u.ratingCount = (u.ratingCount || 0) + 1;
+            if (u.rating >= 4.5 && !(u.badges || []).includes('toprated')) u.badges = [...(u.badges || []), 'toprated'];
+            saveDB();
+            addLog('PUAN', currentUser.username, 'PUAN VERME', u.username + ' - ' + r + '⭐');
+            showToast('⭐ ' + r + ' yıldız!');
+            document.querySelectorAll('#starRating .star').forEach((s, i) => s.classList.toggle('active', i < r));
+        }
+
+        function saveProfile(uid) {
+            const u = DB.users.find(x => x.id === uid);
+            if (!u) return;
+            u.avatarURL = document.getElementById('editAvatar')?.value.trim() || '';
+            u.bannerURL = document.getElementById('editBanner')?.value.trim() || '';
+            u.gameHours = document.getElementById('editHours')?.value.trim() || '0';
+            u.bio = document.getElementById('editBio')?.value.trim() || '';
+            saveDB();
+            if (currentUser && currentUser.id === uid) { currentUser = { ...u, password: undefined }; saveSession(); }
+            addLog('PROFİL', currentUser.username, 'PROFİL GÜNCELLEME', u.username);
+            showToast('✅ Güncellendi!');
+            navigateTo('profile', uid);
+        }
+
+        // ==================== LİDERLİK ====================
+        function renderLeaderboard(content) {
+            const users = [...DB.users].filter(u => !u.isBanned).sort((a, b) => (b.inviteCount || 0) - (a.inviteCount || 0) || (b.rating || 0) - (a.rating || 0)).slice(0, 20);
+            content.innerHTML = '<h2 style="margin-bottom:16px;">🏆 Liderlik</h2><div class="admin-panel">' + users.map((u, i) => {
+                const rc = ROLE_COLORS[u.role] || ROLE_COLORS['Player'];
+                const rClass = i === 0 ? 'rank-1' : i === 1 ? 'rank-2' : i === 2 ? 'rank-3' : '';
+                return '<div class="leaderboard-item"><div class="leaderboard-rank ' + rClass + '" style="' + (!rClass ? 'background:var(--card);color:var(--text2);' : '') + '">' + (i + 1) + '</div><span style="flex:1;cursor:pointer;color:' + rc.color + '" onclick="navigateTo(\'profile\',\'' + u.id + '\')">' + rc.icon + ' ' + u.username + ' ' + (u.isVerified ? '✓' : '') + '</span><span style="font-size:11px;color:var(--text2);">⭐' + Math.round(u.rating || 0) + ' · 📨' + (u.inviteCount || 0) + '</span></div>';
+            }).join('') + '</div><button class="btn btn-outline" style="width:100%;margin-top:10px;" onclick="navigateTo(\'home\')">← Ana Sayfa</button>';
+        }
+
+        // ==================== SOHBET ====================
+        function renderChat(content) {
+            const messages = (DB.chatMessages || []).slice(-50);
+            content.innerHTML = '<h2 style="margin-bottom:16px;">💬 Sohbet</h2><div class="chat-container"><div class="chat-messages" id="chatMessages">' + messages.map(m => {
+                const author = DB.users.find(u => u.id === m.userId);
+                const rc = author ? ROLE_COLORS[author.role] || ROLE_COLORS['Player'] : ROLE_COLORS['Player'];
+                return '<div class="chat-msg ' + (m.userId === (currentUser?.id || '') ? 'own' : '') + '"><span style="color:' + rc.color + ';font-size:10px;">' + rc.icon + ' ' + (author ? author.username : '?') + '</span><br>' + m.text + '</div>';
+            }).join('') + '</div>' + (currentUser ? '<div class="chat-input-row"><input type="text" id="chatInput" placeholder="Mesaj..." onkeydown="if(event.key===\'Enter\')sendChat()"><button class="btn btn-red btn-sm" onclick="sendChat()">Gönder</button></div>' : '<p style="text-align:center;padding:10px;color:var(--text3);">Giriş yap</p>') + '</div><button class="btn btn-outline" style="width:100%;margin-top:10px;" onclick="navigateTo(\'home\')">← Ana Sayfa</button>';
+            setTimeout(() => { const d = document.getElementById('chatMessages'); if (d) d.scrollTop = d.scrollHeight; }, 100);
+        }
+
+        function sendChat() {
+            if (!currentUser) return;
+            const text = document.getElementById('chatInput')?.value.trim();
+            if (!text) return;
+            if (!DB.chatMessages) DB.chatMessages = [];
+            DB.chatMessages.push({ userId: currentUser.id, text, date: new Date().toISOString() });
+            if (DB.chatMessages.length > 200) DB.chatMessages = DB.chatMessages.slice(-200);
+            saveDB();
+            document.getElementById('chatInput').value = '';
+            renderChat(document.getElementById('dynamicContent'));
+        }
+
+        // ==================== ETKİNLİKLER ====================
+        function renderEvents(content) {
+            content.innerHTML = '<h2 style="margin-bottom:16px;">📅 Etkinlikler</h2><div class="admin-panel">' + ((!DB.events || DB.events.length === 0) ? '<p style="color:var(--text3);text-align:center;">Yok</p>' : '') + (DB.events || []).map(e => '<div class="event-card"><h4>' + e.title + '</h4><p style="font-size:11px;color:var(--text2);">📅 ' + new Date(e.date).toLocaleString('tr-TR') + '</p><p style="font-size:12px;margin-top:4px;">' + e.description + '</p><p style="font-size:10px;color:var(--text3);">🌐 ' + e.server + '</p></div>').join('') + '</div>' + (hasPermission('manage_events') ? '<div class="admin-card" style="margin-top:12px;"><h4>Etkinlik Ekle</h4><div class="form-group"><label>Başlık</label><input type="text" id="evTitle"></div><div class="form-group"><label>Tarih</label><input type="datetime-local" id="evDate"></div><div class="form-group"><label>Sunucu</label><select id="evServer"><option>RP Grand #1</option><option>RP Grand #2</option><option>RP Grand RP</option></select></div><div class="form-group"><label>Açıklama</label><textarea id="evDesc"></textarea></div><button class="btn btn-gold" style="width:100%;" onclick="addEvent()">Ekle</button></div>' : '') + '<button class="btn btn-outline" style="width:100%;margin-top:10px;" onclick="navigateTo(\'home\')">← Ana Sayfa</button>';
+        }
+
+        function addEvent() {
+            const t = document.getElementById('evTitle')?.value.trim();
+            const d = document.getElementById('evDate')?.value;
+            const s = document.getElementById('evServer')?.value;
+            const desc = document.getElementById('evDesc')?.value.trim();
+            if (!t || !d) { showToast('⚠️ Başlık ve tarih zorunlu!'); return; }
+            if (!DB.events) DB.events = [];
+            DB.events.push({ title: t, date: d, server: s, description: desc, createdBy: currentUser.id });
+            saveDB();
+            addLog('ETKİNLİK', currentUser.username, 'ETKİNLİK EKLEME', t);
+            showToast('✅ Eklendi!');
+            renderEvents(document.getElementById('dynamicContent'));
+        }
+
+        // ==================== BİLDİRİMLER ====================
+        function addNotification(userId, text, link) {
+            if (!DB.notifications) DB.notifications = [];
+            DB.notifications.push({ id: 'notif_' + Date.now(), userId, text, link, read: false, date: new Date().toISOString() });
+            saveDB();
+        }
+
+        function renderNotifications(content) {
+            if (!currentUser) { navigateTo('login'); return; }
+            const notifs = (DB.notifications || []).filter(n => n.userId === currentUser.id).reverse();
+            (DB.notifications || []).forEach(n => { if (n.userId === currentUser.id) n.read = true; });
+            saveDB();
+            content.innerHTML = '<h2 style="margin-bottom:16px;">🔔 Bildirimler</h2><div class="admin-panel">' + (notifs.length === 0 ? '<p style="color:var(--text3);text-align:center;">Yok</p>' : '') + notifs.map(n => '<div style="padding:8px;border-bottom:1px solid var(--border);font-size:12px;cursor:pointer;" onclick="navigateTo(\'' + (n.link === 'profile' ? 'profile' : 'home') + '\',\'' + (n.link === 'profile' ? currentUser.id : '') + '\')">' + n.text + ' <span style="color:var(--text3);font-size:10px;">· ' + timeAgo(n.date) + '</span></div>').join('') + '</div><button class="btn btn-outline" style="width:100%;margin-top:10px;" onclick="navigateTo(\'home\')">← Ana Sayfa</button>';
+        }
+
+        // ==================== ADMIN PANELİ ====================
+        function renderAdminPanel(content) {
+            const totalUsers = DB.users.length;
+            const onlineNow = (DB.onlineUsers || []).length;
+            const totalListings = (DB.listings || []).filter(l => !l.deleted).length;
+            const bannedUsers = DB.users.filter(u => u.isBanned).length;
+            const totalViews = DB.totalViews || 0;
+
+            content.innerHTML = '<div class="admin-panel"><h2>👑 Admin Panel</h2><div class="admin-grid">' +
+                '<div class="admin-card"><h4>👥 Kayıtlı</h4><div class="stat-big">' + totalUsers + '</div><div class="stat-label">Kullanıcı</div></div>' +
+                '<div class="admin-card"><h4>🟢 Çevrimiçi</h4><div class="stat-big">' + onlineNow + '</div><div class="stat-label">Anlık</div></div>' +
+                '<div class="admin-card"><h4>📝 İlan</h4><div class="stat-big">' + totalListings + '</div><div class="stat-label">Aktif</div></div>' +
+                '<div class="admin-card"><h4>🚫 Yasaklı</h4><div class="stat-big">' + bannedUsers + '</div><div class="stat-label">Kişi</div></div>' +
+                '<div class="admin-card"><h4>👁 Görüntülenme</h4><div class="stat-big">' + totalViews + '</div><div class="stat-label">Toplam</div></div>' +
+                '</div><div style="margin-top:20px;display:flex;flex-wrap:wrap;gap:8px;">' +
+                (hasPermission('post_announcements') ? '<button class="btn btn-gold" onclick="showAdminSection(\'announcement\')">📢 Duyuru</button>' : '') +
+                (hasPermission('manage_users') ? '<button class="btn btn-red" onclick="showAdminSection(\'users\')">👥 Kullanıcılar</button>' : '') +
+                (hasPermission('delete_listings') ? '<button class="btn btn-blue" onclick="showAdminSection(\'listings\')">📝 İlanlar</button>' : '') +
+                (hasPermission('manage_roles') ? '<button class="btn btn-outline" onclick="showAdminSection(\'roles\')">🎭 Rol Ver</button>' : '') +
+                (hasPermission('give_premium') ? '<button class="btn btn-outline" onclick="showAdminSection(\'premium\')">⭐ Premium</button>' : '') +
+                (hasPermission('ban_users') ? '<button class="btn btn-outline" onclick="showAdminSection(\'ban\')">🚫 Yasakla</button>' : '') +
+                (hasPermission('verify_users') ? '<button class="btn btn-outline" onclick="showAdminSection(\'verify\')">✓ Onayla</button>' : '') +
+                (hasPermission('view_logs') ? '<button class="btn btn-outline" onclick="navigateTo(\'logs\')">📋 Loglar</button>' : '') +
+                '</div><div id="adminSection" style="margin-top:16px;"></div><button class="btn btn-outline" style="margin-top:16px;width:100%;" onclick="navigateTo(\'home\')">← Ana Sayfa</button></div>';
+            showAdminSection('announcement');
+        }
+
+        function showAdminSection(section) {
+            const container = document.getElementById('adminSection');
+            if (!container) return;
+            switch (section) {
+                case 'announcement':
+                    container.innerHTML = '<div class="admin-card"><h4>📢 Duyuru Ekle</h4><textarea id="annText" placeholder="Duyuru..." style="width:100%;padding:8px;border-radius:8px;background:var(--bg);color:#fff;border:1px solid var(--border);min-height:60px;font-family:var(--font);"></textarea><button class="btn btn-gold" style="margin-top:8px;width:100%;" onclick="addAnnouncement()">Yayınla</button></div><div style="margin-top:8px;">' + (DB.announcements || []).slice(-5).reverse().map(a => '<div style="background:var(--bg);padding:8px;border-radius:8px;margin-bottom:4px;font-size:11px;">' + a.text + '<br><span style="color:var(--text3);">' + new Date(a.date).toLocaleString('tr-TR') + '</span></div>').join('') + '</div>';
+                    break;
+                case 'users':
+                    container.innerHTML = '<div class="admin-card"><h4>👥 Kullanıcılar (' + DB.users.length + ')</h4>' + DB.users.map(u => {
+                        const rc = ROLE_COLORS[u.role] || ROLE_COLORS['Player'];
+                        const isOnline = (DB.onlineUsers || []).includes(u.id);
+                        return '<div style="display:flex;justify-content:space-between;align-items:center;padding:8px;border-bottom:1px solid var(--border);flex-wrap:wrap;gap:4px;"><span style="cursor:pointer;" onclick="navigateTo(\'profile\',\'' + u.id + '\')">' + rc.icon + ' ' + u.username + ' <span style="color:' + rc.color + ';font-size:10px;">[' + u.role + ']</span> ' + (u.isPremium ? '⭐' : '') + ' ' + (u.isBanned ? '🚫' : '') + ' ' + (u.isVerified ? '✓' : '') + ' ' + (isOnline ? '🟢' : '⚫') + '</span><span style="font-size:10px;color:var(--text3);">' + u.email + '</span></div>';
+                    }).join('') + '</div>';
+                    break;
+                case 'listings':
+                    const al = (DB.listings || []).filter(l => !l.deleted);
+                    container.innerHTML = '<div class="admin-card"><h4>📝 İlanlar (' + al.length + ')</h4>' + al.map(l => {
+                        const a = DB.users.find(u => u.id === l.authorId);
+                        return '<div style="display:flex;justify-content:space-between;align-items:center;padding:8px;border-bottom:1px solid var(--border);flex-wrap:wrap;gap:4px;"><span style="font-size:11px;">' + l.title + ' - ' + (a ? a.username : '?') + '</span><button class="btn btn-red btn-sm" onclick="deleteListing(\'' + l.id + '\');showAdminSection(\'listings\');">Sil</button></div>';
+                    }).join('') + '</div>';
+                    break;
+                case 'roles':
+                    const users = DB.users.filter(u => u.id !== (currentUser?.id || '') && canModifyRole(u.role));
+                    container.innerHTML = '<div class="admin-card"><h4>🎭 Rol Ver</h4><select id="roleUser" style="width:100%;padding:8px;border-radius:8px;background:var(--bg);color:#fff;border:1px solid var(--border);margin-bottom:8px;">' + users.map(u => '<option value="' + u.id + '">' + u.username + ' (' + u.role + ')</option>').join('') + '</select><select id="roleName" style="width:100%;padding:8px;border-radius:8px;background:var(--bg);color:#fff;border:1px solid var(--border);margin-bottom:8px;">' + ROLE_HIERARCHY.filter(r => getRoleLevel(r) > getRoleLevel(currentUser.role)).map(r => '<option value="' + r + '">' + r + '</option>').join('') + '</select><button class="btn btn-blue" style="width:100%;" onclick="changeRole()">Değiştir</button></div>';
+                    break;
+                case 'premium':
+                    const np = DB.users.filter(u => !u.isPremium);
+                    container.innerHTML = '<div class="admin-card"><h4>⭐ Premium Ver</h4><select id="premUser" style="width:100%;padding:8px;border-radius:8px;background:var(--bg);color:#fff;border:1px solid var(--border);margin-bottom:8px;">' + np.map(u => '<option value="' + u.id + '">' + u.username + '</option>').join('') + '</select><button class="btn btn-gold" style="width:100%;" onclick="givePremium()">Premium Yap</button><hr style="border-color:var(--border);margin:10px 0;"><h5>Premium:</h5>' + DB.users.filter(u => u.isPremium).map(u => '<div style="font-size:11px;padding:4px;">⭐ ' + u.username + '</div>').join('') + '</div>';
+                    break;
+                case 'ban':
+                    const nb = DB.users.filter(u => !u.isBanned && u.id !== (currentUser?.id || '') && canModifyRole(u.role));
+                    container.innerHTML = '<div class="admin-card"><h4>🚫 Yasakla</h4><select id="banUser" style="width:100%;padding:8px;border-radius:8px;background:var(--bg);color:#fff;border:1px solid var(--border);margin-bottom:8px;">' + nb.map(u => '<option value="' + u.id + '">' + u.username + ' (' + u.role + ')</option>').join('') + '</select><button class="btn btn-red" style="width:100%;" onclick="banUser()">Yasakla</button><hr style="border-color:var(--border);margin:10px 0;"><h5>Yasaklı:</h5>' + DB.users.filter(u => u.isBanned).map(u => '<div style="font-size:11px;padding:4px;display:flex;justify-content:space-between;">🚫 ' + u.username + ' <button class="btn btn-green btn-sm" onclick="unbanUser(\'' + u.id + '\');showAdminSection(\'ban\');">Kaldır</button></div>').join('') + '</div>';
+                    break;
+                case 'verify':
+                    const uv = DB.users.filter(u => !u.isVerified);
+                    container.innerHTML = '<div class="admin-card"><h4>✓ Onayla</h4><select id="verifyUser" style="width:100%;padding:8px;border-radius:8px;background:var(--bg);color:#fff;border:1px solid var(--border);margin-bottom:8px;">' + uv.map(u => '<option value="' + u.id + '">' + u.username + '</option>').join('') + '</select><button class="btn btn-blue" style="width:100%;" onclick="verifyUser()">Onayla</button><hr style="border-color:var(--border);margin:10px 0;"><h5>Onaylı:</h5>' + DB.users.filter(u => u.isVerified).map(u => '<div style="font-size:11px;padding:4px;">✓ ' + u.username + '</div>').join('') + '</div>';
+                    break;
+            }
+        }
+
+        function addAnnouncement() {
+            const text = document.getElementById('annText')?.value.trim();
+            if (!text) return;
+            if (!DB.announcements) DB.announcements = [];
+            DB.announcements.push({ text, date: new Date().toISOString(), authorId: currentUser.id });
+            DB.users.forEach(u => { if (u.id !== currentUser.id) addNotification(u.id, '📢 ' + text.substring(0, 50) + '...', 'home'); });
+            saveDB();
+            addLog('DUYURU', currentUser.username, 'DUYURU YAYINLAMA', text.substring(0, 50));
+            showToast('📢 Yayınlandı!');
+            showAdminSection('announcement');
+        }
+
+        function changeRole() {
+            if (!hasPermission('manage_roles')) { showToast('⚠️ Yetkin yok!'); return; }
+            const userId = document.getElementById('roleUser')?.value;
+            const newRole = document.getElementById('roleName')?.value;
+            const user = DB.users.find(u => u.id === userId);
+            if (!user || !newRole) return;
+            if (!canModifyRole(user.role)) { showToast('⚠️ Bu kullanıcıyı değiştiremezsin!'); return; }
+            if (getRoleLevel(newRole) <= getRoleLevel(currentUser.role) && currentUser.role !== 'Curator of the Project') { showToast('⚠️ Sadece alt roller!'); return; }
+            const oldRole = user.role;
+            user.role = newRole;
+            addNotification(user.id, '🎭 Rol: ' + newRole, 'profile');
+            saveDB();
+            if (currentUser && currentUser.id === userId) { currentUser.role = newRole; saveSession(); }
+            addLog('ROL', currentUser.username, 'ROL DEĞİŞTİRME', user.username + ': ' + oldRole + ' → ' + newRole);
+            showToast('✅ ' + newRole);
+            showAdminSection('roles');
+        }
+
+        function givePremium() {
+            if (!hasPermission('give_premium')) { showToast('⚠️ Yetkin yok!'); return; }
+            const userId = document.getElementById('premUser')?.value;
+            const user = DB.users.find(u => u.id === userId);
+            if (user) {
+                user.isPremium = true;
+                if (!(user.badges || []).includes('premium')) user.badges = [...(user.badges || []), 'premium'];
+                addNotification(user.id, '⭐ Premium!', 'profile');
+                saveDB();
+                if (currentUser && currentUser.id === userId) { currentUser.isPremium = true; saveSession(); }
+                addLog('PREMIUM', currentUser.username, 'PREMIUM VERME', user.username);
+                showToast('⭐ Premium!');
+                showAdminSection('premium');
+            }
+        }
+
+        function banUser() {
+            if (!hasPermission('ban_users')) { showToast('⚠️ Yetkin yok!'); return; }
+            const userId = document.getElementById('banUser')?.value;
+            const user = DB.users.find(u => u.id === userId);
+            if (!user) return;
+            if (!canModifyRole(user.role)) { showToast('⚠️ Yasaklayamazsın!'); return; }
+            user.isBanned = true;
+            addNotification(user.id, '🚫 Yasaklandın!', 'home');
+            saveDB();
+            addLog('YASAK', currentUser.username, 'KULLANICI YASAKLAMA', user.username);
+            showToast('🚫 ' + user.username + ' yasaklandı!');
+            showAdminSection('ban');
+        }
+
+        function unbanUser(userId) {
+            if (!hasPermission('ban_users')) return;
+            const user = DB.users.find(u => u.id === userId);
+            if (user) {
+                user.isBanned = false;
+                addNotification(user.id, '✅ Yasağın kalktı!', 'profile');
+                saveDB();
+                addLog('YASAK', currentUser.username, 'YASAK KALDIRMA', user.username);
+                showToast('✅ Kaldırıldı!');
+            }
+        }
+
+        function verifyUser() {
+            if (!hasPermission('verify_users')) { showToast('⚠️ Yetkin yok!'); return; }
+            const userId = document.getElementById('verifyUser')?.value;
+            const user = DB.users.find(u => u.id === userId);
+            if (user) {
+                user.isVerified = true;
+                if (!(user.badges || []).includes('verified')) user.badges = [...(user.badges || []), 'verified'];
+                addNotification(user.id, '✓ Onaylandın!', 'profile');
+                saveDB();
+                if (currentUser && currentUser.id === userId) { currentUser.isVerified = true; saveSession(); }
+                addLog('ONAY', currentUser.username, 'KULLANICI ONAYLAMA', user.username);
+                showToast('✓ ' + user.username + ' onaylandı!');
+                showAdminSection('verify');
+            }
+        }
+
+        function timeAgo(d) {
+            const diff = Math.floor((new Date() - new Date(d)) / 1000);
+            if (diff < 60) return 'Az önce';
+            if (diff < 3600) return Math.floor(diff / 60) + ' dk';
+            if (diff < 86400) return Math.floor(diff / 3600) + ' saat';
+            return Math.floor(diff / 86400) + ' gün';
+        }
+
+        function showToast(msg) {
+            const toast = document.getElementById('toast');
+            if (!toast) return;
+            toast.textContent = msg;
+            toast.style.display = 'block';
+            clearTimeout(window._toastTimeout);
+            window._toastTimeout = setTimeout(() => { toast.style.display = 'none'; }, 2500);
+        }
+
+        // ==================== BAŞLANGIÇ ====================
+        function initApp() {
+            try {
+                if (!DB || !DB.users || !Array.isArray(DB.users)) {
+                    DB = JSON.parse(JSON.stringify(DEFAULT_DB));
+                    saveDB();
+                }
+                loadSession();
+                updateNavbar();
+                const content = document.getElementById('dynamicContent');
+                if (content) renderHome(content);
+                updateOnlineStatus();
+                addLog('SİSTEM', 'Sistem', 'SİTE AÇILIŞ', 'Sayfa yüklendi');
+                console.log('🎮 EkipBul v4.0 Hazır! LOG SİSTEMİ AKTİF');
+            } catch (e) {
+                console.error('Hata:', e);
+                const content = document.getElementById('dynamicContent');
+                if (content) content.innerHTML = '<div class="form-container"><h2>⚠️ Hata</h2><p>Sayfayı yenileyin</p><button class="btn-submit" onclick="localStorage.clear();location.reload();">Sıfırla</button></div>';
+            }
+        }
+
+        if (document.readyState === 'loading') {
+            document.addEventListener('DOMContentLoaded', initApp);
+        } else {
+            initApp();
+        }
+    </script>
+</body>
+</html>
