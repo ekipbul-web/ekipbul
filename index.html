@@ -1,0 +1,1278 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>EkipBul - RP Grand Mobile Ekip Bulma Platformu</title>
+    <meta name="description" content="EkipBul - RP Grand Mobile için takım arkadaşı, çete, aile ve ekip bulma platformu. Hemen ücretsiz ilan ver!">
+    <meta name="keywords" content="RP Grand, ekip bul, roleplay, takım arkadaşı, mafya, polis, çete, EkipBul">
+    <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' rx='20' fill='%23e74c3c'/><text y='.65em' x='50' text-anchor='middle' font-size='50' font-weight='bold' fill='white'>EB</text></svg>">
+    <style>
+        :root {
+            --bg: #f0f2f5;
+            --white: #ffffff;
+            --text: #333333;
+            --text-light: #666666;
+            --red: #e74c3c;
+            --red-hover: #c0392b;
+            --navy: #2c3e50;
+            --navy-hover: #1a252f;
+            --green: #27ae60;
+            --green-bg: #e8f5e9;
+            --yellow: #f39c12;
+            --yellow-bg: #fef9e7;
+            --border: #e0e0e0;
+            --shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
+            --shadow-hover: 0 4px 12px rgba(0, 0, 0, 0.15);
+            --radius: 10px;
+            --transition: all 0.2s ease;
+        }
+
+        .dark-mode {
+            --bg: #1a1a2e;
+            --white: #16213e;
+            --text: #e0e0e0;
+            --text-light: #aaa;
+            --border: #2a2a4a;
+            --shadow: 0 1px 3px rgba(0, 0, 0, 0.3);
+            --navy: #0f3460;
+            --navy-hover: #1a1a4e;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+            background: var(--bg);
+            color: var(--text);
+            line-height: 1.5;
+            transition: var(--transition);
+        }
+
+        /* NAVBAR */
+        .navbar {
+            background: var(--white);
+            padding: 12px 24px;
+            box-shadow: var(--shadow);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+            transition: var(--transition);
+        }
+
+        .logo {
+            font-size: 20px;
+            font-weight: 700;
+            text-decoration: none;
+            color: var(--text);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        .logo-icon {
+            background: var(--red);
+            color: white;
+            width: 34px;
+            height: 34px;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 16px;
+        }
+        .nav-actions {
+            display: flex;
+            gap: 8px;
+            align-items: center;
+        }
+        .btn {
+            padding: 9px 18px;
+            border-radius: 8px;
+            border: none;
+            cursor: pointer;
+            font-size: 13px;
+            font-weight: 600;
+            text-decoration: none;
+            transition: var(--transition);
+            white-space: nowrap;
+        }
+        .btn-outline {
+            background: transparent;
+            color: var(--navy);
+            border: 2px solid var(--border);
+        }
+        .btn-outline:hover {
+            border-color: var(--navy);
+        }
+        .btn-primary {
+            background: var(--navy);
+            color: white;
+        }
+        .btn-primary:hover {
+            background: var(--navy-hover);
+        }
+        .btn-danger {
+            background: var(--red);
+            color: white;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+        .btn-danger:hover {
+            background: var(--red-hover);
+        }
+        .btn-sm {
+            padding: 6px 12px;
+            font-size: 12px;
+        }
+        .btn-icon {
+            background: none;
+            border: none;
+            cursor: pointer;
+            font-size: 20px;
+            padding: 6px;
+            border-radius: 50%;
+            transition: var(--transition);
+        }
+        .btn-icon:hover {
+            background: rgba(0, 0, 0, 0.05);
+        }
+
+        /* HERO */
+        .hero {
+            background: linear-gradient(135deg, var(--navy) 0%, #1a3a5c 100%);
+            padding: 40px 24px;
+            text-align: center;
+            color: white;
+        }
+        .hero h1 {
+            font-size: 28px;
+            margin-bottom: 8px;
+        }
+        .hero p {
+            color: rgba(255, 255, 255, 0.85);
+            font-size: 15px;
+            margin-bottom: 20px;
+        }
+        .hero-buttons {
+            display: flex;
+            gap: 12px;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+        .btn-hero {
+            padding: 14px 28px;
+            font-size: 15px;
+            font-weight: 700;
+            border-radius: 10px;
+            border: none;
+            cursor: pointer;
+            transition: var(--transition);
+        }
+        .btn-hero-red {
+            background: var(--red);
+            color: white;
+        }
+        .btn-hero-red:hover {
+            background: var(--red-hover);
+            transform: translateY(-2px);
+        }
+        .btn-hero-white {
+            background: white;
+            color: var(--navy);
+        }
+        .btn-hero-white:hover {
+            transform: translateY(-2px);
+        }
+
+        /* ANA KAPSAYICI */
+        .container {
+            max-width: 1100px;
+            margin: 0 auto;
+            padding: 20px 16px;
+        }
+
+        /* FİLTRE BAR */
+        .filter-bar {
+            background: var(--white);
+            padding: 16px 20px;
+            border-radius: var(--radius);
+            box-shadow: var(--shadow);
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+            align-items: center;
+            margin-bottom: 20px;
+            transition: var(--transition);
+        }
+        .search-input {
+            flex: 1;
+            min-width: 200px;
+            padding: 10px 14px;
+            border: 2px solid var(--border);
+            border-radius: 8px;
+            font-size: 14px;
+            outline: none;
+            transition: var(--transition);
+            background: var(--white);
+            color: var(--text);
+        }
+        .search-input:focus {
+            border-color: var(--red);
+        }
+        .filter-select {
+            padding: 10px 14px;
+            border: 2px solid var(--border);
+            border-radius: 8px;
+            font-size: 14px;
+            background: var(--white);
+            cursor: pointer;
+            outline: none;
+            min-width: 150px;
+            color: var(--text);
+            transition: var(--transition);
+        }
+        .filter-select:focus {
+            border-color: var(--red);
+        }
+
+        /* İSTATİSTİK */
+        .stats-bar {
+            display: flex;
+            gap: 16px;
+            flex-wrap: wrap;
+            margin-bottom: 16px;
+            align-items: center;
+            justify-content: space-between;
+        }
+        .stats-text {
+            font-size: 14px;
+            color: var(--text-light);
+        }
+        .stats-text strong {
+            color: var(--text);
+        }
+        .sort-btns {
+            display: flex;
+            gap: 6px;
+        }
+        .sort-btn {
+            padding: 6px 12px;
+            border-radius: 20px;
+            border: 1px solid var(--border);
+            background: var(--white);
+            cursor: pointer;
+            font-size: 12px;
+            color: var(--text-light);
+            transition: var(--transition);
+        }
+        .sort-btn.active {
+            background: var(--red);
+            color: white;
+            border-color: var(--red);
+        }
+
+        /* İLAN KARTLARI */
+        .listings {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+        .listing-card {
+            background: var(--white);
+            border-radius: var(--radius);
+            padding: 16px 20px;
+            box-shadow: var(--shadow);
+            display: flex;
+            gap: 16px;
+            align-items: center;
+            cursor: pointer;
+            transition: var(--transition);
+            border: 2px solid transparent;
+            position: relative;
+        }
+        .listing-card:hover {
+            box-shadow: var(--shadow-hover);
+            border-color: #e0e0e0;
+        }
+        .listing-card.featured {
+            border-color: var(--yellow);
+            background: var(--yellow-bg);
+        }
+        .featured-badge {
+            position: absolute;
+            top: -8px;
+            right: 16px;
+            background: var(--yellow);
+            color: #fff;
+            font-size: 10px;
+            padding: 3px 10px;
+            border-radius: 12px;
+            font-weight: 700;
+        }
+        .favorite-btn {
+            position: absolute;
+            top: 12px;
+            right: 12px;
+            background: none;
+            border: none;
+            font-size: 18px;
+            cursor: pointer;
+            color: #ccc;
+            transition: var(--transition);
+        }
+        .favorite-btn.active {
+            color: var(--red);
+        }
+        .user-avatar {
+            width: 56px;
+            height: 56px;
+            border-radius: 50%;
+            flex-shrink: 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+            font-weight: 700;
+        }
+        .avatar-red {
+            background: #fde8e8;
+            color: #c0392b;
+        }
+        .avatar-blue {
+            background: #e8f0fe;
+            color: #2471a3;
+        }
+        .avatar-green {
+            background: #e8f8e8;
+            color: #1e7e34;
+        }
+        .avatar-purple {
+            background: #f3e8fd;
+            color: #6c3483;
+        }
+        .avatar-orange {
+            background: #fef5e7;
+            color: #d35400;
+        }
+        .listing-info {
+            flex: 1;
+            min-width: 0;
+        }
+        .listing-title {
+            font-weight: 700;
+            font-size: 16px;
+            margin-bottom: 2px;
+            color: var(--text);
+        }
+        .listing-meta {
+            font-size: 13px;
+            color: var(--text-light);
+            display: flex;
+            gap: 12px;
+            flex-wrap: wrap;
+        }
+        .listing-meta span {
+            display: flex;
+            align-items: center;
+            gap: 4px;
+        }
+        .listing-tags {
+            display: flex;
+            gap: 6px;
+            margin-top: 6px;
+            flex-wrap: wrap;
+        }
+        .tag {
+            font-size: 11px;
+            padding: 4px 10px;
+            border-radius: 20px;
+            font-weight: 600;
+        }
+        .tag-lfm {
+            background: #fff3cd;
+            color: #856404;
+        }
+        .tag-lfg {
+            background: #d4edda;
+            color: #155724;
+        }
+        .tag-server {
+            background: #e2e3e5;
+            color: #383d41;
+        }
+        .tag-premium {
+            background: #fde8e8;
+            color: #c0392b;
+        }
+        .listing-action {
+            flex-shrink: 0;
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+            align-items: center;
+        }
+        .btn-contact {
+            padding: 8px 16px;
+            background: var(--green);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 13px;
+            font-weight: 600;
+            transition: var(--transition);
+        }
+        .btn-contact:hover {
+            background: #219a52;
+        }
+        .listing-views {
+            font-size: 11px;
+            color: var(--text-light);
+        }
+
+        /* DAHA FAZLA YÜKLE */
+        .load-more {
+            text-align: center;
+            margin-top: 20px;
+        }
+        .btn-load {
+            padding: 12px 40px;
+            background: var(--white);
+            color: var(--navy);
+            border: 2px solid var(--border);
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: 600;
+            transition: var(--transition);
+        }
+        .btn-load:hover {
+            border-color: var(--navy);
+        }
+
+        /* MODAL */
+        .modal-overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.6);
+            z-index: 2000;
+            justify-content: center;
+            align-items: center;
+        }
+        .modal-overlay.active {
+            display: flex;
+        }
+        .modal {
+            background: var(--white);
+            border-radius: 12px;
+            padding: 28px;
+            width: 90%;
+            max-width: 550px;
+            max-height: 85vh;
+            overflow-y: auto;
+            position: relative;
+            transition: var(--transition);
+        }
+        .modal-close {
+            position: absolute;
+            top: 12px;
+            right: 16px;
+            background: none;
+            border: none;
+            font-size: 24px;
+            cursor: pointer;
+            color: #999;
+        }
+        .modal-avatar {
+            width: 64px;
+            height: 64px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 28px;
+            font-weight: 700;
+            margin-bottom: 12px;
+        }
+        .modal h3 {
+            font-size: 20px;
+            margin-bottom: 4px;
+        }
+        .modal .modal-server {
+            color: var(--text-light);
+            font-size: 14px;
+            margin-bottom: 12px;
+        }
+        .modal .modal-desc {
+            font-size: 14px;
+            line-height: 1.6;
+            color: #555;
+            margin-bottom: 16px;
+            background: #f9f9f9;
+            padding: 12px;
+            border-radius: 8px;
+        }
+        .dark-mode .modal .modal-desc {
+            background: #0d1b2a;
+            color: #ccc;
+        }
+        .modal-detail-row {
+            display: flex;
+            justify-content: space-between;
+            padding: 8px 0;
+            border-bottom: 1px solid #f0f0f0;
+            font-size: 13px;
+        }
+        .dark-mode .modal-detail-row {
+            border-bottom-color: #2a2a4a;
+        }
+        .modal-detail-row span:first-child {
+            color: #888;
+        }
+        .modal-detail-row span:last-child {
+            font-weight: 600;
+        }
+        .btn-modal-contact {
+            width: 100%;
+            margin-top: 16px;
+            padding: 12px;
+            background: var(--green);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 15px;
+            font-weight: 700;
+            cursor: pointer;
+        }
+        .modal-comments {
+            margin-top: 16px;
+        }
+        .modal-comments h4 {
+            margin-bottom: 8px;
+        }
+        .comment {
+            background: #f9f9f9;
+            padding: 10px;
+            border-radius: 8px;
+            margin-bottom: 8px;
+            font-size: 13px;
+        }
+        .dark-mode .comment {
+            background: #0d1b2a;
+        }
+        .comment strong {
+            color: var(--navy);
+        }
+
+        /* FORM SAYFASI */
+        .form-container {
+            background: var(--white);
+            border-radius: var(--radius);
+            padding: 32px;
+            box-shadow: var(--shadow);
+            max-width: 600px;
+            margin: 40px auto;
+            transition: var(--transition);
+        }
+        .form-container h2 {
+            margin-bottom: 20px;
+            text-align: center;
+        }
+        .form-group {
+            margin-bottom: 16px;
+        }
+        .form-group label {
+            display: block;
+            font-weight: 600;
+            margin-bottom: 6px;
+            font-size: 14px;
+        }
+        .form-group input,
+        .form-group select,
+        .form-group textarea {
+            width: 100%;
+            padding: 10px 14px;
+            border: 2px solid var(--border);
+            border-radius: 8px;
+            font-size: 14px;
+            outline: none;
+            background: var(--white);
+            color: var(--text);
+            transition: var(--transition);
+        }
+        .form-group textarea {
+            resize: vertical;
+            min-height: 100px;
+        }
+        .form-group input:focus,
+        .form-group select:focus,
+        .form-group textarea:focus {
+            border-color: var(--red);
+        }
+        .btn-submit {
+            width: 100%;
+            padding: 12px;
+            background: var(--red);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: var(--transition);
+        }
+        .btn-submit:hover {
+            background: var(--red-hover);
+        }
+
+        /* PROFİL */
+        .profile-header {
+            background: var(--white);
+            border-radius: var(--radius);
+            padding: 24px;
+            box-shadow: var(--shadow);
+            display: flex;
+            gap: 20px;
+            align-items: center;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+            transition: var(--transition);
+        }
+        .profile-avatar {
+            width: 80px;
+            height: 80px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 36px;
+            font-weight: 700;
+            flex-shrink: 0;
+        }
+        .profile-info h3 {
+            font-size: 22px;
+        }
+        .profile-stats {
+            display: flex;
+            gap: 20px;
+            flex-wrap: wrap;
+        }
+        .profile-stat {
+            text-align: center;
+            background: var(--white);
+            padding: 16px;
+            border-radius: var(--radius);
+            box-shadow: var(--shadow);
+            flex: 1;
+            min-width: 100px;
+            transition: var(--transition);
+        }
+        .profile-stat .stat-num {
+            font-size: 24px;
+            font-weight: 700;
+            color: var(--red);
+        }
+        .profile-stat .stat-label {
+            font-size: 12px;
+            color: var(--text-light);
+        }
+
+        /* TOAST */
+        .toast {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            background: var(--navy);
+            color: white;
+            padding: 12px 20px;
+            border-radius: 8px;
+            font-size: 14px;
+            z-index: 9999;
+            animation: slideIn 0.3s ease;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+        }
+        @keyframes slideIn {
+            from {
+                transform: translateX(100%);
+                opacity: 0;
+            }
+            to {
+                transform: translateX(0);
+                opacity: 1;
+            }
+        }
+
+        /* FOOTER */
+        .footer {
+            text-align: center;
+            padding: 24px;
+            color: #999;
+            font-size: 12px;
+            border-top: 1px solid var(--border);
+            margin-top: 40px;
+        }
+
+        /* TAB MENU */
+        .tab-menu {
+            display: flex;
+            gap: 4px;
+            background: var(--white);
+            padding: 6px;
+            border-radius: var(--radius);
+            box-shadow: var(--shadow);
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+            transition: var(--transition);
+        }
+        .tab-btn {
+            padding: 10px 20px;
+            border: none;
+            background: transparent;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: 600;
+            font-size: 13px;
+            color: var(--text-light);
+            transition: var(--transition);
+        }
+        .tab-btn.active {
+            background: var(--red);
+            color: white;
+        }
+
+        /* RESPONSIVE */
+        @media (max-width: 768px) {
+            .navbar {
+                padding: 10px 14px;
+            }
+            .logo {
+                font-size: 17px;
+            }
+            .btn {
+                padding: 7px 12px;
+                font-size: 12px;
+            }
+            .hero h1 {
+                font-size: 22px;
+            }
+            .filter-bar {
+                flex-direction: column;
+            }
+            .search-input,
+            .filter-select {
+                width: 100%;
+            }
+            .listing-card {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+            .listing-action {
+                width: 100%;
+                flex-direction: row;
+                justify-content: space-between;
+            }
+            .btn-contact {
+                width: auto;
+            }
+            .profile-header {
+                flex-direction: column;
+                text-align: center;
+            }
+        }
+
+        /* BADGE */
+        .badge {
+            display: inline-block;
+            padding: 3px 8px;
+            border-radius: 12px;
+            font-size: 10px;
+            font-weight: 700;
+        }
+        .badge-online {
+            background: #d4edda;
+            color: #155724;
+        }
+        .badge-offline {
+            background: #f8d7da;
+            color: #721c24;
+        }
+
+        /* PAGINATION */
+        .pagination {
+            display: flex;
+            gap: 6px;
+            justify-content: center;
+            margin-top: 20px;
+        }
+        .page-btn {
+            width: 36px;
+            height: 36px;
+            border-radius: 8px;
+            border: 1px solid var(--border);
+            background: var(--white);
+            cursor: pointer;
+            font-weight: 600;
+            font-size: 13px;
+            transition: var(--transition);
+            color: var(--text);
+        }
+        .page-btn.active {
+            background: var(--red);
+            color: white;
+            border-color: var(--red);
+        }
+        .page-btn:hover {
+            border-color: var(--navy);
+        }
+    </style>
+</head>
+<body>
+
+    <!-- NAVBAR -->
+    <nav class="navbar">
+        <a href="#" class="logo" onclick="showPage('home')">
+            <div class="logo-icon">🎮</div>
+            Ekip<span style="color:#e74c3c; margin-left:2px;">Bul</span>
+        </a>
+        <div class="nav-actions">
+            <button class="btn-icon" onclick="toggleDarkMode()" title="Karanlık Mod">🌙</button>
+            <button class="btn btn-outline" onclick="showPage('login')">Giriş Yap</button>
+            <button class="btn btn-primary" onclick="showPage('register')">Kayıt Ol</button>
+            <button class="btn btn-danger" onclick="showPage('create-listing')">📝 Ücretsiz İlan Ver</button>
+        </div>
+    </nav>
+
+    <!-- ANA İÇERİK ALANI -->
+    <div id="main-content">
+        <!-- HERO -->
+        <div class="hero">
+            <h1>🎯 RP Grand Mobile Ekip Arkadaşını Bul</h1>
+            <p>Roleplay sunucuları için takım arkadaşı, çete, aile ya da ekip ara · 47 aktif ilan</p>
+            <div class="hero-buttons">
+                <button class="btn-hero btn-hero-red" onclick="showPage('create-listing')">📝 Hemen İlan Ver</button>
+                <button class="btn-hero btn-hero-white" onclick="document.querySelector('.search-input').focus()">🔍 İlan Ara</button>
+            </div>
+        </div>
+
+        <div class="container">
+            <!-- TAB MENU -->
+            <div class="tab-menu">
+                <button class="tab-btn active" onclick="filterTab('all', this)">Tüm İlanlar</button>
+                <button class="tab-btn" onclick="filterTab('lfm', this)">Aranan (LFM)</button>
+                <button class="tab-btn" onclick="filterTab('lfg', this)">Arıyor (LFG)</button>
+                <button class="tab-btn" onclick="filterTab('premium', this)">Öne Çıkanlar</button>
+                <button class="tab-btn" onclick="filterTab('favorites', this)">Favorilerim</button>
+            </div>
+
+            <!-- FİLTRE -->
+            <div class="filter-bar">
+                <input type="text" class="search-input" placeholder="🔍 İlan ara... (örn: polis, mafya, doktor)" id="searchInput" oninput="filterListings()">
+                <select class="filter-select" id="filterCategory" onchange="filterListings()">
+                    <option value="">Tüm Kategoriler</option>
+                    <option>Yasal Rol</option>
+                    <option>Yasadışı Rol</option>
+                    <option>Serbest Rol</option>
+                    <option>Çete/Aile</option>
+                </select>
+                <select class="filter-select" id="filterServer" onchange="filterListings()">
+                    <option value="">Tüm Sunucular</option>
+                    <option>RP Grand #1</option>
+                    <option>RP Grand #2</option>
+                    <option>RP Grand RP</option>
+                </select>
+                <select class="filter-select" id="filterType" onchange="filterListings()">
+                    <option value="">Aranan / Arıyor</option>
+                    <option>Aranan (LFM)</option>
+                    <option>Arıyor (LFG)</option>
+                </select>
+            </div>
+
+            <!-- İSTATİSTİK & SIRALAMA -->
+            <div class="stats-bar">
+                <p class="stats-text" id="statsText">Toplam <strong>47</strong> aktif ilan bulundu · Son 24 saatte <strong>12</strong> yeni ilan</p>
+                <div class="sort-btns">
+                    <button class="sort-btn active" onclick="sortListings('newest', this)">En Yeni</button>
+                    <button class="sort-btn" onclick="sortListings('popular', this)">En Popüler</button>
+                    <button class="sort-btn" onclick="sortListings('views', this)">En Çok Görüntülenen</button>
+                </div>
+            </div>
+
+            <!-- İLAN LİSTESİ -->
+            <div class="listings" id="listings">
+                <!-- İlanlar JS ile oluşturulacak -->
+            </div>
+
+            <!-- SAYFALAMA -->
+            <div class="pagination" id="pagination">
+                <button class="page-btn">←</button>
+                <button class="page-btn active">1</button>
+                <button class="page-btn">2</button>
+                <button class="page-btn">3</button>
+                <button class="page-btn">4</button>
+                <button class="page-btn">5</button>
+                <button class="page-btn">→</button>
+            </div>
+
+            <!-- DAHA FAZLA -->
+            <div class="load-more">
+                <button class="btn-load" onclick="loadMore()">↓ Daha Fazla İlan Yükle</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- MODAL -->
+    <div class="modal-overlay" id="modalOverlay">
+        <div class="modal">
+            <button class="modal-close" onclick="closeModal()">✕</button>
+            <div class="modal-avatar avatar-blue" id="modalAvatar">K</div>
+            <h3 id="modalTitle">İlan Başlığı</h3>
+            <p class="modal-server" id="modalServer">Sunucu</p>
+            <p class="modal-desc" id="modalDesc">Açıklama</p>
+            <div class="modal-detail-row">
+                <span>İlan Türü</span>
+                <span id="modalType">-</span>
+            </div>
+            <div class="modal-detail-row">
+                <span>Kategori</span>
+                <span id="modalCategory">-</span>
+            </div>
+            <div class="modal-detail-row">
+                <span>Discord</span>
+                <span id="modalDiscord">-</span>
+            </div>
+            <div class="modal-detail-row">
+                <span>Oyun Süresi</span>
+                <span id="modalHours">-</span>
+            </div>
+            <div class="modal-detail-row">
+                <span>Görüntülenme</span>
+                <span id="modalViews">-</span>
+            </div>
+            <div class="modal-detail-row">
+                <span>Yayınlanma</span>
+                <span id="modalDate">-</span>
+            </div>
+            <button class="btn-modal-contact" onclick="contactUser()">💬 Discord Üzerinden İletişime Geç</button>
+
+            <!-- Yorumlar -->
+            <div class="modal-comments">
+                <h4>💬 Yorumlar (3)</h4>
+                <div class="comment"><strong>AhmetRP:</strong> Harika ekip, tavsiye ederim! ⭐⭐⭐⭐⭐</div>
+                <div class="comment"><strong>Zeynep99:</strong> İletişim çok iyi, teşekkürler.</div>
+                <div class="comment"><strong>MertEfe:</strong> Bugün görüştük, süper insanlar.</div>
+                <textarea placeholder="Yorum yaz..." style="width:100%; margin-top:8px; padding:8px; border-radius:8px; border:1px solid #ddd; resize:vertical;" rows="2"></textarea>
+                <button class="btn-contact" style="width:100%; margin-top:6px;">Yorum Gönder</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- TOAST BİLDİRİM -->
+    <div class="toast" id="toast" style="display:none;"></div>
+
+    <!-- FOOTER -->
+    <div class="footer">
+        © 2026 <strong>EkipBul</strong> · ekipbul.onrender.com · RP Grand Mobile Ekip Bulma Platformu · 
+        <a href="#" style="color:#e74c3c;">Gizlilik</a> · 
+        <a href="#" style="color:#e74c3c;">Kullanım Şartları</a> · 
+        <a href="#" style="color:#e74c3c;">İletişim</a>
+    </div>
+
+    <script>
+        // ==================== VERİ ====================
+        const listingsData = [
+            { id: 1, name: 'Kerem', role: 'Yasal Polis Birimi', server: 'RP Grand #1', category: 'Yasal Rol',
+                desc: 'Polis departmanına katılacak ciddi rol yapacak arkadaşlar arıyoruz. En az 500 saat oyun süresi olan, rol kurallarına hakim kişiler tercih sebebidir.',
+                tag: 'lfg', avatarClass: 'avatar-blue', avatarLetter: 'K', discord: 'kerem#1234', hours: '1200+ saat',
+                views: 342, date: '2 saat önce', featured: false, favorite: false },
+            { id: 2, name: 'MertEfe', role: 'Mafya/Çete Üyesi', server: 'RP Grand #2', category: 'Yasadışı Rol',
+                desc: 'Tecrübeli mafya rolü oyuncusuyum. Aktif bir çete arıyorum. Sesli iletişim kullanırım.',
+                tag: 'lfg', avatarClass: 'avatar-red', avatarLetter: 'M', discord: 'mertefe#5678', hours: '800+ saat',
+                views: 215, date: '5 saat önce', featured: true, favorite: false },
+            { id: 3, name: 'ZeynepRP', role: 'EMS/Doktor Ekibi', server: 'RP Grand RP', category: 'Yasal Rol',
+                desc: 'Hastane rolü için doktor, hemşire ve paramedik arıyoruz. Yeni başlayanlara eğitim verilir.',
+                tag: 'lfm', avatarClass: 'avatar-green', avatarLetter: 'Z', discord: 'zeyneprp#9012', hours: '600+ saat',
+                views: 189, date: '8 saat önce', featured: false, favorite: false },
+            { id: 4, name: 'Burak34', role: 'Galerici/İşletme Ortağı', server: 'RP Grand #1', category: 'Serbest Rol',
+                desc: 'Galeri işletmesi için ortak arıyorum. Sermaye bende, işletme deneyimi olan bir ortakla büyümek istiyorum.',
+                tag: 'lfm', avatarClass: 'avatar-purple', avatarLetter: 'B', discord: 'burak34#3456', hours: '1500+ saat',
+                views: 421, date: '12 saat önce', featured: true, favorite: false },
+            { id: 5, name: 'Emirhan', role: 'Mekanik Oto Tamirci', server: 'RP Grand #2', category: 'Serbest Rol',
+                desc: 'Oto tamirhane açtım, yanıma çırak/eğitmen arıyorum. Yeni başlayanlara da açığım.',
+                tag: 'lfm', avatarClass: 'avatar-orange', avatarLetter: 'E', discord: 'emirhan#7890', hours: '300+ saat',
+                views: 98, date: '1 gün önce', featured: false, favorite: false },
+            { id: 6, name: 'SelinAv', role: 'Avukatlık Bürosu', server: 'RP Grand RP', category: 'Yasal Rol',
+                desc: 'Hukuk bürosu kuruyorum, avukat ve stajyer avukat arıyorum. Rol deneyimi şart değil.',
+                tag: 'lfm', avatarClass: 'avatar-purple', avatarLetter: 'S', discord: 'selin#2345', hours: '950+ saat',
+                views: 276, date: '1 gün önce', featured: false, favorite: false },
+        ];
+
+        let favorites = JSON.parse(localStorage.getItem('ekipbul_favorites') || '[]');
+        let currentFilter = 'all';
+        let currentModalId = null;
+        let currentSort = 'newest';
+
+        // ==================== SAYFA YÜKLEME ====================
+        function renderListings(data) {
+            const container = document.getElementById('listings');
+            container.innerHTML = data.map(l => `
+                <div class="listing-card ${l.featured ? 'featured' : ''}" data-id="${l.id}" data-category="${l.category}" data-tag="${l.tag}" data-server="${l.server}">
+                    ${l.featured ? '<div class="featured-badge">⭐ Öne Çıkan</div>' : ''}
+                    <button class="favorite-btn ${favorites.includes(l.id) ? 'active' : ''}" onclick="event.stopPropagation(); toggleFavorite(${l.id})">${favorites.includes(l.id) ? '❤️' : '🤍'}</button>
+                    <div class="user-avatar ${l.avatarClass}">${l.avatarLetter}</div>
+                    <div class="listing-info" onclick="openModal(${l.id})">
+                        <div class="listing-title">${l.role}</div>
+                        <div class="listing-meta">
+                            <span>👤 ${l.name}</span>
+                            <span>🕐 ${l.date}</span>
+                            <span>🌐 ${l.server}</span>
+                        </div>
+                        <div class="listing-tags">
+                            <span class="tag tag-${l.tag}">${l.tag === 'lfm' ? 'Aranan (LFM)' : 'Arıyor (LFG)'}</span>
+                            <span class="tag tag-server">${l.server}</span>
+                            ${l.featured ? '<span class="tag tag-premium">Öne Çıkan</span>' : ''}
+                        </div>
+                    </div>
+                    <div class="listing-action">
+                        <button class="btn-contact" onclick="event.stopPropagation(); contactListing(${l.id})">📩 İletişime Geç</button>
+                        <span class="listing-views">👁 ${l.views} görüntülenme</span>
+                    </div>
+                </div>
+            `).join('');
+            updateStats(data.length);
+        }
+
+        function updateStats(count) {
+            document.getElementById('statsText').innerHTML = `Toplam <strong>${count}</strong> aktif ilan bulundu · Son 24 saatte <strong>12</strong> yeni ilan`;
+        }
+
+        // ==================== MODAL ====================
+        function openModal(id) {
+            const l = listingsData.find(x => x.id === id);
+            if (!l) return;
+            currentModalId = id;
+            document.getElementById('modalAvatar').textContent = l.avatarLetter;
+            document.getElementById('modalAvatar').className = 'modal-avatar ' + l.avatarClass;
+            document.getElementById('modalTitle').textContent = l.name + ' - ' + l.role;
+            document.getElementById('modalServer').textContent = '🌐 ' + l.server + ' · ' + l.date;
+            document.getElementById('modalDesc').textContent = l.desc;
+            document.getElementById('modalType').textContent = l.tag === 'lfm' ? 'Aranan (LFM)' : 'Arıyor (LFG)';
+            document.getElementById('modalCategory').textContent = l.category;
+            document.getElementById('modalDiscord').textContent = l.discord;
+            document.getElementById('modalHours').textContent = l.hours;
+            document.getElementById('modalViews').textContent = l.views + ' görüntülenme';
+            document.getElementById('modalDate').textContent = l.date;
+            document.getElementById('modalOverlay').classList.add('active');
+            // Görüntülenme arttır
+            l.views++;
+            renderListings(getFilteredListings());
+        }
+
+        function closeModal() {
+            document.getElementById('modalOverlay').classList.remove('active');
+            currentModalId = null;
+        }
+
+        function contactUser() {
+            if (currentModalId) {
+                const l = listingsData.find(x => x.id === currentModalId);
+                showToast('✅ Discord kopyalandı: ' + l.discord + ' | Yönlendiriliyorsunuz...');
+            }
+        }
+
+        function contactListing(id) {
+            const l = listingsData.find(x => x.id === id);
+            showToast('📩 ' + l.name + ' ile iletişim: ' + l.discord);
+        }
+
+        // ==================== FAVORİ ====================
+        function toggleFavorite(id) {
+            if (favorites.includes(id)) {
+                favorites = favorites.filter(f => f !== id);
+                showToast('💔 Favorilerden çıkarıldı');
+            } else {
+                favorites.push(id);
+                showToast('❤️ Favorilere eklendi');
+            }
+            localStorage.setItem('ekipbul_favorites', JSON.stringify(favorites));
+            renderListings(getFilteredListings());
+        }
+
+        // ==================== FİLTRELEME ====================
+        function getFilteredListings() {
+            let data = [...listingsData];
+            const search = document.getElementById('searchInput')?.value.toLowerCase() || '';
+            const category = document.getElementById('filterCategory')?.value || '';
+            const server = document.getElementById('filterServer')?.value || '';
+            const type = document.getElementById('filterType')?.value || '';
+
+            if (currentFilter === 'lfm') data = data.filter(l => l.tag === 'lfm');
+            if (currentFilter === 'lfg') data = data.filter(l => l.tag === 'lfg');
+            if (currentFilter === 'premium') data = data.filter(l => l.featured);
+            if (currentFilter === 'favorites') data = data.filter(l => favorites.includes(l.id));
+            if (search) data = data.filter(l => l.role.toLowerCase().includes(search) || l.desc.toLowerCase().includes(search) || l.name.toLowerCase().includes(search));
+            if (category) data = data.filter(l => l.category === category);
+            if (server) data = data.filter(l => l.server === server);
+            if (type === 'Aranan (LFM)') data = data.filter(l => l.tag === 'lfm');
+            if (type === 'Arıyor (LFG)') data = data.filter(l => l.tag === 'lfg');
+
+            // Sıralama
+            if (currentSort === 'popular') data.sort((a, b) => b.featured - a.featured || b.views - a.views);
+            if (currentSort === 'views') data.sort((a, b) => b.views - a.views);
+            if (currentSort === 'newest') data.sort((a, b) => b.id - a.id);
+
+            return data;
+        }
+
+        function filterListings() {
+            renderListings(getFilteredListings());
+        }
+
+        function filterTab(tab, btn) {
+            currentFilter = tab;
+            document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+            btn.classList.add('active');
+            renderListings(getFilteredListings());
+        }
+
+        function sortListings(type, btn) {
+            currentSort = type;
+            document.querySelectorAll('.sort-btn').forEach(b => b.classList.remove('active'));
+            btn.classList.add('active');
+            renderListings(getFilteredListings());
+        }
+
+        function loadMore() {
+            const newId = listingsData.length + 1;
+            const names = ['Can', 'Ece', 'Deniz', 'Ali', 'Ayşe', 'Mehmet'];
+            const roles = ['Çete Lideri', 'Mekanik', 'Doktor', 'Polis', 'Galerici', 'Avukat'];
+            const randomName = names[Math.floor(Math.random() * names.length)];
+            const randomRole = roles[Math.floor(Math.random() * roles.length)];
+            listingsData.push({
+                id: newId,
+                name: randomName,
+                role: randomRole,
+                server: 'RP Grand #' + (Math.floor(Math.random() * 3) + 1),
+                category: ['Yasal Rol', 'Yasadışı Rol', 'Serbest Rol'][Math.floor(Math.random() * 3)],
+                desc: 'Yeni ilan açıklaması - detaylar için iletişime geçin.',
+                tag: Math.random() > 0.5 ? 'lfm' : 'lfg',
+                avatarClass: ['avatar-blue', 'avatar-red', 'avatar-green', 'avatar-purple', 'avatar-orange'][Math.floor(Math.random() * 5)],
+                avatarLetter: randomName[0],
+                discord: randomName.toLowerCase() + '#0000',
+                hours: (Math.floor(Math.random() * 2000) + 100) + '+ saat',
+                views: Math.floor(Math.random() * 500),
+                date: 'Az önce',
+                featured: Math.random() > 0.7,
+                favorite: false
+            });
+            renderListings(getFilteredListings());
+            showToast('✅ Yeni ilanlar yüklendi!');
+        }
+
+        // ==================== SAYFA GEÇİŞLERİ ====================
+        function showPage(page) {
+            if (page === 'create-listing') {
+                document.getElementById('main-content').innerHTML = `
+                    <div class="form-container">
+                        <h2>📝 Yeni İlan Oluştur</h2>
+                        <div class="form-group"><label>Ad Soyad / Nick</label><input type="text" placeholder="örn: KeremRP"></div>
+                        <div class="form-group"><label>Rol / Pozisyon</label><input type="text" placeholder="örn: Polis Memuru, Mafya Üyesi"></div>
+                        <div class="form-group"><label>Kategori</label><select><option>Yasal Rol</option><option>Yasadışı Rol</option><option>Serbest Rol</option><option>Çete/Aile</option></select></div>
+                        <div class="form-group"><label>Sunucu</label><select><option>RP Grand #1</option><option>RP Grand #2</option><option>RP Grand RP</option></select></div>
+                        <div class="form-group"><label>İlan Türü</label><select><option>Aranan (LFM)</option><option>Arıyor (LFG)</option></select></div>
+                        <div class="form-group"><label>Discord Kullanıcı Adı</label><input type="text" placeholder="örn: kullanici#1234"></div>
+                        <div class="form-group"><label>Oyun Süresi</label><input type="text" placeholder="örn: 500+ saat"></div>
+                        <div class="form-group"><label>Açıklama</label><textarea placeholder="İlan detaylarını yazın..."></textarea></div>
+                        <div class="form-group"><label><input type="checkbox"> Öne çıkarma (Premium)</label></div>
+                        <button class="btn-submit" onclick="submitListing()">✅ İlanı Yayınla</button>
+                        <button class="btn btn-outline" style="width:100%; margin-top:10px;" onclick="showPage('home')">← Ana Sayfaya Dön</button>
+                    </div>
+                `;
+            } else if (page === 'login') {
+                document.getElementById('main-content').innerHTML = `
+                    <div class="form-container">
+                        <h2>🔐 Giriş Yap</h2>
+                        <div class="form-group"><label>E-posta veya Kullanıcı Adı</label><input type="text" placeholder="ornek@mail.com"></div>
+                        <div class="form-group"><label>Şifre</label><input type="password" placeholder="********"></div>
+                        <button class="btn-submit" onclick="showToast('✅ Giriş başarılı!'); showPage('home')">Giriş Yap</button>
+                        <p style="text-align:center; margin-top:10px; font-size:13px;">Hesabın yok mu? <a href="#" style="color:#e74c3c;" onclick="showPage('register')">Kayıt Ol</a></p>
+                        <button class="btn btn-outline" style="width:100%; margin-top:10px;" onclick="showPage('home')">← Ana Sayfaya Dön</button>
+                    </div>
+                `;
+            } else if (page === 'register') {
+                document.getElementById('main-content').innerHTML = `
+                    <div class="form-container">
+                        <h2>📋 Kayıt Ol</h2>
+                        <div class="form-group"><label>Kullanıcı Adı</label><input type="text" placeholder="RP nickiniz"></div>
+                        <div class="form-group"><label>E-posta</label><input type="email" placeholder="ornek@mail.com"></div>
+                        <div class="form-group"><label>Discord</label><input type="text" placeholder="kullanici#1234"></div>
+                        <div class="form-group"><label>Şifre</label><input type="password" placeholder="********"></div>
+                        <div class="form-group"><label>Şifre Tekrar</label><input type="password" placeholder="********"></div>
+                        <button class="btn-submit" onclick="showToast('✅ Kayıt başarılı!'); showPage('home')">Kayıt Ol</button>
+                        <p style="text-align:center; margin-top:10px; font-size:13px;">Zaten hesabın var mı? <a href="#" style="color:#e74c3c;" onclick="showPage('login')">Giriş Yap</a></p>
+                        <button class="btn btn-outline" style="width:100%; margin-top:10px;" onclick="showPage('home')">← Ana Sayfaya Dön</button>
+                    </div>
+                `;
+            } else if (page === 'home') {
+                location.reload();
+            }
+        }
+
+        function submitListing() {
+            showToast('✅ İlanınız başarıyla yayınlandı!');
+            setTimeout(() => showPage('home'), 1000);
+        }
+
+        // ==================== TOAST ====================
+        function showToast(msg) {
+            const toast = document.getElementById('toast');
+            toast.textContent = msg;
+            toast.style.display = 'block';
+            setTimeout(() => { toast.style.display = 'none'; }, 3000);
+        }
+
+        // ==================== KARANLIK MOD ====================
+        function toggleDarkMode() {
+            document.body.classList.toggle('dark-mode');
+            const isDark = document.body.classList.contains('dark-mode');
+            localStorage.setItem('ekipbul_darkMode', isDark ? 'on' : 'off');
+            document.querySelector('.btn-icon').textContent = isDark ? '☀️' : '🌙';
+            showToast(isDark ? '🌙 Karanlık mod aktif' : '☀️ Aydınlık mod aktif');
+        }
+
+        // Karanlık mod tercihini yükle
+        if (localStorage.getItem('ekipbul_darkMode') === 'on') {
+            document.body.classList.add('dark-mode');
+            document.querySelector('.btn-icon').textContent = '☀️';
+        }
+
+        // ==================== EVENT LISTENERS ====================
+        document.getElementById('modalOverlay').addEventListener('click', function(e) {
+            if (e.target === this) closeModal();
+        });
+        document.addEventListener('keydown', function(e) {
+            if (e.key === 'Escape') closeModal();
+        });
+
+        // ==================== BAŞLANGIÇ ====================
+        renderListings(listingsData);
+
+        console.log('🎮 EkipBul Hazır! 🌐 ekipbul.onrender.com');
+        console.log('📋 Toplam ilan:', listingsData.length);
+        console.log('❤️ Favoriler:', favorites.length);
+        console.log('🌙 Karanlık mod:', localStorage.getItem('ekipbul_darkMode') || 'off');
+        console.log('✅ Tüm özellikler aktif!');
+    </script>
+</body>
+  </html>
