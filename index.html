@@ -1,0 +1,728 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>EkipBul Pro Ultimate - RP Grand Mobile</title>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <style>
+        :root {
+            --bg: #020206;
+            --card: rgba(9, 9, 26, 0.7);
+            --card2: rgba(18, 18, 40, 0.85);
+            --border: rgba(255, 51, 85, 0.15);
+            --border-glow: rgba(255, 51, 85, 0.4);
+            --red: #ff3355;
+            --red2: #ff5e7e;
+            --blue: #3a95ff;
+            --blue2: #6bb1ff;
+            --yellow: #ffa800;
+            --gold: #ffd700;
+            --text: #f5f5fa;
+            --text2: #a5a5c5;
+            --text3: #52527a;
+            --green: #2ecc71;
+            --purple: #a55eea;
+            --radius: 16px;
+            --shadow: 0 20px 50px rgba(0,0,0,0.8);
+            --font: 'Segoe UI', -apple-system, BlinkMacSystemFont, sans-serif;
+        }
+        
+        * { margin:0; padding:0; box-sizing:border-box; }
+        body {
+            font-family: var(--font);
+            background: var(--bg);
+            background-image: 
+                radial-gradient(circle at 5% 10%, rgba(255, 51, 85, 0.07) 0%, transparent 35%),
+                radial-gradient(circle at 95% 90%, rgba(58, 149, 255, 0.07) 0%, transparent 35%),
+                radial-gradient(ellipse at top, #06061a 0%, #020206 90%);
+            color: var(--text);
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+
+        ::-webkit-scrollbar { width: 6px; height: 6px; }
+        ::-webkit-scrollbar-track { background: #020206; }
+        ::-webkit-scrollbar-thumb { background: var(--red); border-radius: 10px; }
+
+        .navbar {
+            background: rgba(3, 3, 12, 0.85);
+            backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px);
+            border-bottom: 1px solid var(--border);
+            padding: 16px 40px;
+            display: flex; justify-content: space-between; align-items: center;
+            position: sticky; top: 0; z-index: 1000;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+        }
+        .logo {
+            font-size: 26px; font-weight: 900; color: #fff; text-decoration: none;
+            display: flex; align-items: center; gap: 12px; letter-spacing: -0.5px;
+        }
+        .logo span { background: linear-gradient(135deg, var(--red), var(--yellow)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+        .logo-icon {
+            background: linear-gradient(135deg, var(--red), var(--red2)); width: 40px; height: 40px;
+            border-radius: 12px; display: flex; align-items: center; justify-content: center; font-size: 20px;
+            box-shadow: 0 0 20px rgba(255,51,85,0.4); animation: pulse 2.5s infinite ease-in-out;
+        }
+        @keyframes pulse { 0%, 100% { transform: scale(1); } 50% { transform: scale(1.05); box-shadow: 0 0 25px rgba(255,51,85,0.6); } }
+
+        .nav-actions { display: flex; gap: 12px; align-items: center; }
+        .btn {
+            padding: 10px 20px; border-radius: 12px; border: none; cursor: pointer;
+            font-size: 13px; font-weight: 700; transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+            white-space: nowrap; display: inline-flex; align-items: center; justify-content: center; gap: 8px;
+        }
+        .btn:hover { transform: translateY(-2px); }
+        .btn-outline { background: rgba(255,255,255,0.03); color: #fff; border: 1px solid rgba(255,255,255,0.1); }
+        .btn-outline:hover { border-color: var(--red); background: rgba(255,51,85,0.1); }
+        .btn-red { background: linear-gradient(135deg, var(--red), var(--red2)); color: #fff; box-shadow: 0 4px 15px rgba(255,51,85,0.25); }
+        .btn-blue { background: linear-gradient(135deg, var(--blue), var(--blue2)); color: #fff; }
+        .btn-gold { background: linear-gradient(135deg, var(--yellow), var(--gold)); color: #000; font-weight: 800; }
+        
+        .user-badge {
+            display: flex; align-items: center; gap: 10px; background: rgba(255,255,255,0.02);
+            padding: 8px 14px; border-radius: 12px; font-size: 13px; font-weight: 700; cursor: pointer;
+            border: 1px solid rgba(255,255,255,0.06); transition: 0.3s;
+        }
+        .user-badge:hover { border-color: var(--blue); background: rgba(58,149,255,0.05); }
+
+        .container { max-width: 1400px; margin: 0 auto; padding: 40px 24px; }
+        
+        /* LAYOUTS */
+        .main-grid { display: grid; grid-template-columns: 1fr 350px; gap: 30px; }
+        @media (max-width: 1024px) { .main-grid { grid-template-columns: 1fr; } }
+
+        .hero { text-align: center; padding: 20px 0 40px 0; }
+        .hero h1 { font-size: 54px; font-weight: 950; letter-spacing: -1.5px; }
+        .hero h1 span { background: linear-gradient(135deg, var(--red), var(--yellow)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+        .hero p { color: var(--text2); font-size: 16px; margin-top: 12px; opacity: 0.8; }
+
+        /* SEARCH & FILTER CONTROLS */
+        .filter-bar {
+            background: var(--card); border: 1px solid rgba(255,255,255,0.04); padding: 20px;
+            border-radius: var(--radius); margin-bottom: 30px; display: grid;
+            grid-template-columns: 2fr 1fr 1fr; gap: 15px; backdrop-filter: blur(10px);
+        }
+        @media (max-width: 768px) { .filter-bar { grid-template-columns: 1fr; } }
+        .filter-bar input, .filter-bar select {
+            padding: 12px 16px; background: #050512; border: 1px solid rgba(255,255,255,0.08);
+            border-radius: 10px; color: #fff; outline: none; font-size: 14px; transition: 0.2s;
+        }
+        .filter-bar input:focus, .filter-bar select:focus { border-color: var(--red); }
+
+        .tabs { display: flex; gap: 6px; background: rgba(255,255,255,0.02); padding: 6px; border-radius: 14px; margin-bottom: 24px; border: 1px solid rgba(255,255,255,0.05); overflow-x: auto; }
+        .tab-btn { padding: 12px 20px; border: none; background: transparent; border-radius: 10px; cursor: pointer; font-weight: 700; font-size: 13px; color: var(--text2); transition: 0.2s; text-align: center; flex: 1; white-space: nowrap; }
+        .tab-btn.active { background: linear-gradient(135deg, var(--red), var(--red2)); color: #fff; box-shadow: 0 4px 15px rgba(255,51,85,0.25); }
+
+        /* LISTINGS */
+        .listings { display: grid; grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)); gap: 20px; }
+        .listing-card {
+            background: var(--card); backdrop-filter: blur(15px); -webkit-backdrop-filter: blur(15px);
+            border-radius: var(--radius); padding: 24px; border: 1px solid rgba(255,255,255,0.04);
+            cursor: pointer; transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+            position: relative; display: flex; flex-direction: column; justify-content: space-between; min-height: 240px;
+        }
+        .listing-card:hover { border-color: var(--border-glow); transform: translateY(-4px); box-shadow: var(--shadow); }
+        .listing-card.premium { border-color: rgba(255,215,0,0.35); background: linear-gradient(145deg, rgba(255,215,0,0.02), var(--card)); }
+        
+        .listing-header { display: flex; align-items: center; gap: 14px; margin-bottom: 16px; }
+        .listing-avatar { width: 46px; height: 46px; border-radius: 12px; display: flex; align-items: center; justify-content: center; font-weight: 800; background: rgba(255,51,85,0.1); color: var(--red); border: 1px solid rgba(255,51,85,0.15); font-size: 18px; }
+        .listing-card.premium .listing-avatar { background: rgba(255,215,0,0.1); color: var(--gold); border-color: rgba(255,215,0,0.2); }
+        .listing-title { font-weight: 700; font-size: 17px; color: #fff; line-height: 1.3; }
+        .listing-meta { font-size: 12px; color: var(--text2); display: flex; flex-direction: column; gap: 4px; margin-top: 2px; }
+        .listing-body { font-size: 13px; color: var(--text2); margin-bottom: 16px; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
+        
+        .tag { font-size: 11px; padding: 5px 12px; border-radius: 6px; font-weight: 700; display: inline-block; text-transform: uppercase; }
+        .tag-lfm { background: rgba(255,168,0,0.1); color: var(--yellow); border: 1px solid rgba(255,168,0,0.2); }
+        .tag-lfg { background: rgba(46,204,113,0.1); color: var(--green); border: 1px solid rgba(46,204,113,0.2); }
+        .fav-btn { position: absolute; top: 24px; right: 24px; background: none; border: none; color: var(--text3); font-size: 20px; cursor: pointer; transition: 0.2s; }
+        .fav-btn:hover { transform: scale(1.2); }
+        .fav-btn.active { color: var(--red); }
+
+        /* LIVE SIDEBAR CHAT */
+        .sidebar-chat { background: var(--card); border-radius: var(--radius); border: 1px solid rgba(255,255,255,0.04); padding: 20px; display: flex; flex-direction: column; height: 580px; position: sticky; top: 110px; box-shadow: var(--shadow); }
+        .chat-header { font-size: 15px; font-weight: 800; display: flex; align-items: center; gap: 8px; margin-bottom: 15px; padding-bottom: 10px; border-bottom: 1px solid rgba(255,255,255,0.05); }
+        .chat-header span { width: 8px; height: 8px; background: var(--green); border-radius: 50%; display: inline-block; animation: blink 1.5s infinite; }
+        @keyframes blink { 0%, 100% { opacity: 0.3; } 50% { opacity: 1; } }
+        .chat-messages { flex: 1; overflow-y: auto; display: flex; flex-direction: column; gap: 10px; margin-bottom: 15px; padding-right: 5px; }
+        .chat-bubble { background: rgba(255,255,255,0.02); padding: 10px 14px; border-radius: 12px; font-size: 13px; border: 1px solid rgba(255,255,255,0.02); word-break: break-word; }
+        .chat-bubble b { color: var(--blue2); display: block; font-size: 11px; margin-bottom: 2px; }
+        .chat-input-box { display: flex; gap: 8px; }
+        .chat-input-box input { flex: 1; padding: 12px; background: #050512; border: 1px solid rgba(255,255,255,0.08); color: #fff; border-radius: 10px; outline: none; font-size: 13px; }
+        .chat-input-box input:focus { border-color: var(--red); }
+
+        /* FORMS & CONTAINERS */
+        .form-container { background: var(--card2); backdrop-filter: blur(20px); border-radius: var(--radius); padding: 40px; max-width: 550px; margin: 40px auto; border: 1px solid rgba(255,255,255,0.06); box-shadow: var(--shadow); }
+        .form-container h2 { font-size: 28px; font-weight: 900; margin-bottom: 8px; letter-spacing: -0.5px; text-align: center; }
+        .form-group { margin-bottom: 20px; }
+        .form-group label { display: block; font-weight: 700; margin-bottom: 8px; font-size: 12px; color: var(--text2); text-transform: uppercase; letter-spacing: 0.5px; }
+        .form-group input, .form-group select, .form-group textarea { width: 100%; padding: 12px 16px; border: 1px solid rgba(255,255,255,0.08); border-radius: 10px; background: #050512; color: #fff; font-size: 14px; outline: none; transition: 0.2s; }
+        .form-group input:focus, .form-group select:focus, .form-group textarea:focus { border-color: var(--red); box-shadow: 0 0 10px rgba(255,51,85,0.1); }
+
+        /* LEADERBOARD & TABLES */
+        .podyum { display: flex; justify-content: center; align-items: flex-end; gap: 15px; margin: 30px 0 40px 0; padding-top: 20px; }
+        .podyum-sira { background: var(--card); border: 1px solid rgba(255,255,255,0.05); border-radius: var(--radius); padding: 24px 16px; text-align: center; width: 140px; transition: 0.3s; box-shadow: var(--shadow); }
+        .podyum-sira h3 { font-size: 16px; font-weight: 800; margin: 8px 0 4px 0; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+        .podyum-sira p { font-size: 12px; color: var(--text2); }
+        .podyum-sira.p1 { height: 180px; border-color: var(--gold); background: linear-gradient(to top, rgba(255,215,0,0.06), var(--card)); }
+        .podyum-sira.p2 { height: 150px; border-color: #cbd5e1; background: linear-gradient(to top, rgba(203,213,225,0.04), var(--card)); }
+        .podyum-sira.p3 { height: 130px; border-color: #cd7f32; background: linear-gradient(to top, rgba(205,127,50,0.04), var(--card)); }
+        .lead-table { width: 100%; border-collapse: collapse; text-align: left; margin-top: 20px; background: var(--card); border-radius: var(--radius); overflow: hidden; border: 1px solid rgba(255,255,255,0.03); }
+        .lead-table th { padding: 16px; color: var(--text3); font-size: 12px; text-transform: uppercase; border-bottom: 1px solid rgba(255,255,255,0.05); font-weight: 800; }
+        .lead-table td { padding: 16px; border-bottom: 1px solid rgba(255,255,255,0.03); font-size: 14px; }
+        .lead-table tr:last-child td { border: none; }
+
+        /* USER ROW MODIFICATIONS FOR ADMIN */
+        .admin-user-row { display: flex; justify-content: space-between; align-items: center; padding: 14px; background: rgba(255,255,255,0.02); border-radius: 10px; margin-bottom: 10px; border: 1px solid rgba(255,255,255,0.04); }
+
+        /* MODALS */
+        .modal-overlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(1,1,4,0.85); z-index: 2000; justify-content: center; align-items: center; padding: 20px; backdrop-filter: blur(12px); }
+        .modal-overlay.active { display: flex; }
+        .modal { background: #090919; border-radius: var(--radius); padding: 36px; width: 100%; max-width: 600px; max-height: 85vh; overflow-y: auto; border: 1px solid rgba(255,255,255,0.08); position: relative; box-shadow: var(--shadow); }
+        .modal-close { position: absolute; top: 24px; right: 24px; background: none; border: none; color: var(--text2); font-size: 24px; cursor: pointer; }
+        .modal h3 { font-size: 24px; font-weight: 900; margin-bottom: 10px; padding-right: 30px; }
+        .modal-row { display: flex; justify-content: space-between; padding: 14px 0; border-bottom: 1px solid rgba(255,255,255,0.04); font-size: 14px; }
+
+        .role-badge { padding: 4px 10px; border-radius: 6px; font-size: 10px; font-weight: 800; display: inline-block; text-transform: uppercase; letter-spacing: 0.5px; }
+        .rb-curator { background: rgba(255,51,85,0.15); color: #ff4466; border: 1px solid #ff4466; }
+        .rb-player { background: rgba(255,255,255,0.05); color: #aaa; border: 1px solid rgba(255,255,255,0.1); }
+
+        .announcement { background: rgba(255,168,0,0.03); border-left: 4px solid var(--yellow); padding: 16px; border-radius: 0 12px 12px 0; margin-bottom: 24px; font-size: 14px; border: 1px solid rgba(255,168,0,0.08); }
+        .toast { position: fixed; bottom: 30px; left: 50%; transform: translateX(-50%); background: #0c0c1f; color: #fff; padding: 14px 28px; border-radius: 12px; font-size: 14px; font-weight: 700; z-index: 9999; display: none; box-shadow: var(--shadow); border: 1px solid var(--red); }
+        .footer { text-align: center; padding: 40px; color: var(--text3); font-size: 13px; margin-top: 60px; border-top: 1px solid rgba(255,255,255,0.03); }
+        
+        .auth-switch { text-align: center; font-size: 13px; color: var(--text2); margin-top: 15px; cursor: pointer; text-decoration: underline; }
+    </style>
+</head>
+<body>
+
+<!-- TOP NAVIGATION -->
+<nav class="navbar">
+    <a href="#" class="logo" onclick="navigateTo('home')">
+        <div class="logo-icon">👑</div>
+        Ekip<span>Bul Pro</span>
+    </a>
+    <div class="nav-actions" id="navActions"></div>
+</nav>
+
+<!-- MAIN APP BODY -->
+<div class="container" id="dynamicContent"></div>
+
+<!-- SYSTEM TOAST -->
+<div class="toast" id="toast"></div>
+
+<!-- FOOTER -->
+<div class="footer">© 2026 EkipBul Pro · Tüm Hakları Saklıdır. Built for Grand RP.</div>
+
+<script>
+// ==================== SUPABASE GLOBAL INITIALIZATION ====================
+const SUPABASE_URL = 'https://dyapvhoefuimnzorevoz.supabase.co';
+const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImR5YXB2aG9lZnVpbW56b3Jldm96Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODE3MTY4NDcsImV4cCI6MjA5NzI5Mjg0N30.5mmSd9kYBWuj5J6ldiRXQbb1Fa4Wnf_biThQO9zqWZw';
+const sb = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+
+const ROLE_HIERARCHY = ['Curator of the Project', 'Deputy Curator of the Project', 'Chief Admin', 'Senior Admin', 'Admin', 'Technical Admin', 'Moderator', 'Yazıcı', 'Player'];
+const ADMIN_ROLES = ROLE_HIERARCHY.slice(0, 7);
+
+let currentUser = null;
+let favorites = JSON.parse(localStorage.getItem('ekipbul_favorites')) || [];
+
+// ==================== ENGINE UTILITIES ====================
+function isAdmin() { return currentUser && ADMIN_ROLES.includes(currentUser.role); }
+function showToast(msg) {
+    const toast = document.getElementById('toast'); if (!toast) return;
+    toast.textContent = msg; toast.style.display = 'block'; clearTimeout(window._tTime);
+    window._tTime = setTimeout(() => { toast.style.display = 'none'; }, 3000);
+}
+function timeAgo(dateStr) {
+    const diff = Math.floor((new Date() - new Date(dateStr)) / 1000);
+    if (diff < 60) return 'Az önce'; if (diff < 3600) return Math.floor(diff / 60) + 'dk önce';
+    if (diff < 86400) return Math.floor(diff / 3600) + 'saat önce'; return Math.floor(diff / 86400) + ' gün önce';
+}
+
+// ==================== AUTH & PROFILE CORE ====================
+async function loadUserProfile(userId) {
+    const { data } = await sb.from('profiles').select('*').eq('id', userId).single();
+    if (data) {
+        if (data.is_banned) {
+            await sb.auth.signOut(); currentUser = null;
+            document.getElementById('dynamicContent').innerHTML = `<div class="form-container" style="border-color:var(--red);"><h2>🚫 Hesap Engellendi</h2><p>Kuralları ihlal ettiğiniz gerekçesiyle platform erişiminiz sonlandırılmıştır.</p></div>`;
+            return;
+        }
+        currentUser = data;
+    }
+}
+
+async function updateNavbar() {
+    const nav = document.getElementById('navActions'); if (!nav) return;
+    if (currentUser) {
+        const { count } = await sb.from('messages').select('*', { count: 'exact', head: true }).eq('receiver_id', currentUser.id);
+        nav.innerHTML = `
+            <button class="btn btn-outline btn-sm" onclick="navigateTo('inbox')">📥 Gelen Kutusu (${count || 0})</button>
+            <button class="btn btn-outline btn-sm" onclick="navigateTo('favorites')">⭐ Favoriler</button>
+            <button class="btn btn-outline btn-sm" onclick="navigateTo('leaderboard')">🏆 Sıralama</button>
+            <button class="btn btn-blue btn-sm" onclick="navigateTo('teams')">👥 Ekipler</button>
+            <button class="btn btn-red btn-sm" onclick="navigateTo('create-listing')">📝 İlan Ver</button>
+            <span class="user-badge" onclick="navigateTo('profile','${currentUser.id}')">🎮 ${currentUser.username}</span>
+            ${isAdmin() ? '<button class="btn btn-gold btn-sm" onclick="navigateTo(\'admin\')">Panel</button>' : ''}
+            <button class="btn btn-outline btn-sm" onclick="logout()">Çıkış</button>
+        `;
+    } else {
+        nav.innerHTML = `
+            <button class="btn btn-outline btn-sm" onclick="navigateTo('leaderboard')">🏆 Sıralama</button>
+            <button class="btn btn-blue btn-sm" onclick="navigateTo('teams')">👥 Ekipler</button>
+            <button class="btn btn-red btn-sm" onclick="navigateTo('login')">Giriş Yap / Kayıt Ol</button>
+        `;
+    }
+}
+
+async function navigateTo(page, data) {
+    const content = document.getElementById('dynamicContent');
+    await updateNavbar();
+    switch (page) {
+        case 'home': await renderHome(content); break;
+        case 'login': renderLogin(content); break;
+        case 'register': renderRegister(content); break;
+        case 'forgot-password': renderForgotPassword(content); break;
+        case 'create-listing': if (!currentUser) { renderLogin(content); return; } renderCreateListing(content); break;
+        case 'admin': if (!isAdmin()) { await renderHome(content); return; } await renderAdminPanel(content); break;
+        case 'profile': await renderProfile(content, data); break;
+        case 'teams': await renderTeams(content); break;
+        case 'leaderboard': await renderLeaderboard(content); break;
+        case 'inbox': if (!currentUser) { renderLogin(content); return; } await renderInbox(content); break;
+        case 'favorites': await renderFavorites(content); break;
+        default: await renderHome(content);
+    }
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+// ==================== HOME PAGE & LIVE STREAM CHAT ====================
+async function renderHome(content) {
+    content.innerHTML = `
+        <div class="hero"><h1>Ekip<span>Bul</span> Pro</h1><p>Grand RP dünyasının en gelişmiş ilan ve oyuncu koordinasyon ağı.</p></div>
+        <div id="announcementBar"></div>
+        
+        <div class="filter-bar">
+            <input type="text" id="searchKeyword" placeholder="Anahtar kelime ile ara (Örn: Aile, Vagos, Legal)..." oninput="triggerFilters()">
+            <select id="searchServer" onchange="triggerFilters()"><option value="all">Tüm Sunucular</option><option>RP Grand #1</option><option>RP Grand #2</option></select>
+            <select id="searchType" onchange="triggerFilters()"><option value="all">Tüm İlan Tipleri</option><option value="lfm">LFM (Arananlar)</option><option value="lfg">LFG (Arayanlar)</option></select>
+        </div>
+
+        <div class="main-grid">
+            <div id="leftColumn">
+                <div class="tabs">
+                    <button class="tab-btn active" onclick="filterHomeTab('all', this)">Tüm İlanlar</button>
+                    <button class="tab-btn" onclick="filterHomeTab('premium', this)">⭐ Premium Öne Çıkanlar</button>
+                </div>
+                <div class="listings" id="homeListings">Yükleniyor...</div>
+            </div>
+            <div id="rightSidebar">
+                <div class="sidebar-chat">
+                    <div class="chat-header"><span></span> ⚡ Canlı Global Sohbet</div>
+                    <div class="chat-messages" id="liveGlobalChatBox">Sohbet yükleniyor veya aktif oturum yok...</div>
+                    <div class="chat-input-box">
+                        <input type="text" id="sidebarChatInput" placeholder="${currentUser ? 'Mesajınızı yazın...' : 'Sohbet için giriş yapın'}" ${!currentUser ? 'disabled' : ''} onkeydown="if(event.key==='Enter') sendSidebarChat()">
+                        <button class="btn btn-red btn-sm" onclick="sendSidebarChat()" ${!currentUser ? 'disabled' : ''}>></button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    `;
+    
+    const { data: listings } = await sb.from('listings').select('*').eq('deleted', false).order('created_at', { ascending: false });
+    window._homeListings = listings || []; window._homeFilter = 'all';
+    renderHomeListings();
+    
+    const { data: ann } = await sb.from('announcements').select('*').order('created_at', { ascending: false }).limit(1);
+    if(ann && ann[0]) document.getElementById('announcementBar').innerHTML = `<div class="announcement"><strong>📢 Güncel Duyuru:</strong> ${ann[0].text}</div>`;
+    
+    if (currentUser) { startGlobalChatStream(); }
+}
+
+function renderHomeListings() {
+    const container = document.getElementById('homeListings'); if(!container) return;
+    let data = window._homeListings || [];
+    
+    const keyword = document.getElementById('searchKeyword')?.value.toLowerCase() || '';
+    const server = document.getElementById('searchServer')?.value || 'all';
+    const type = document.getElementById('searchType')?.value || 'all';
+
+    if (keyword) data = data.filter(l => l.title.toLowerCase().includes(keyword) || l.description.toLowerCase().includes(keyword));
+    if (server !== 'all') data = data.filter(l => l.server === server);
+    if (type !== 'all') data = data.filter(l => l.type === type);
+    if (window._homeFilter === 'premium') data = data.filter(l => l.is_premium);
+
+    if(data.length === 0) { container.innerHTML = `<p style="color:var(--text3); padding:20px;">Kritere uygun ilan bulunamadı.</p>`; return; }
+    container.innerHTML = data.map(l => {
+        const isFav = favorites.includes(l.id);
+        return `
+            <div class="listing-card ${l.is_premium ? 'premium' : ''}" onclick="viewListing('${l.id}')">
+                <button class="fav-btn ${isFav ? 'active' : ''}" onclick="toggleFavorite(event, '${l.id}')">★</button>
+                <div class="listing-header">
+                    <div class="listing-avatar">${l.server.charAt(l.server.length - 1)}</div>
+                    <div>
+                        <div class="listing-title">${l.title}</div>
+                        <div class="listing-meta"><span>🌐 ${l.server}</span><span>🕐 ${timeAgo(l.created_at)}</span></div>
+                    </div>
+                </div>
+                <p class="listing-body">${l.description}</p>
+                <div>
+                    <span class="tag ${l.type === 'lfm' ? 'tag-lfm' : 'tag-lfg'}">${l.type === 'lfm' ? 'Oyuncu Arıyor' : 'Ekip Arıyor'}</span>
+                    ${l.is_premium ? '<span class="tag" style="background:gold;color:#000;margin-left:5px;">PREMIUM</span>' : ''}
+                </div>
+            </div>
+        `;
+    }).join('');
+}
+
+function filterHomeTab(tab, btn) { window._homeFilter = tab; document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active')); btn.classList.add('active'); renderHomeListings(); }
+function triggerFilters() { renderHomeListings(); }
+
+async function startGlobalChatStream() {
+    const box = document.getElementById('liveGlobalChatBox'); if(!box) return;
+    const fetchMsgs = async () => {
+        const { data } = await sb.from('messages').select('*').eq('receiver_id', 'all').order('created_at', { ascending: false }).limit(30);
+        if(data) {
+            box.innerHTML = data.reverse().map(m => `<div class="chat-bubble"><b>👤 Sistem Kullanıcısı</b>${m.text}</div>`).join('');
+            box.scrollTop = box.scrollHeight;
+        }
+    };
+    await fetchMsgs(); clearInterval(window._chatInterval); window._chatInterval = setInterval(fetchMsgs, 4000);
+}
+
+async function sendSidebarChat() {
+    const input = document.getElementById('sidebarChatInput'); const text = input?.value.trim(); if(!text) return;
+    await sb.from('messages').insert([{ sender_id: currentUser.id, receiver_id: 'all', text: text }]);
+    input.value = ''; startGlobalChatStream();
+}
+
+// ==================== FAVORITES SYSTEM ====================
+function toggleFavorite(e, id) {
+    e.stopPropagation();
+    if(favorites.includes(id)) { favorites = favorites.filter(f => f !== id); showToast('Favorilerden kaldırıldı.'); }
+    else { favorites.push(id); showToast('Favorilere eklendi!'); }
+    localStorage.setItem('ekipbul_favorites', JSON.stringify(favorites));
+    renderHomeListings();
+}
+
+async function renderFavorites(content) {
+    content.innerHTML = `<h2>⭐ Favori İlanlarınız</h2><p style="color:var(--text2); margin-bottom:20px;">Takibe aldığınız aktif ilanlar.</p><div class="listings" id="favListings">Yükleniyor...</div>`;
+    if(favorites.length === 0) { document.getElementById('favListings').innerHTML = '<p style="color:var(--text3);">Henüz favori ilanınız yok.</p>'; return; }
+    const { data } = await sb.from('listings').select('*').in('id', favorites).eq('deleted', false);
+    if(!data || data.length === 0) { document.getElementById('favListings').innerHTML = '<p style="color:var(--text3);">Favorilediğiniz ilanlar silinmiş veya bulunamadı.</p>'; return; }
+    document.getElementById('favListings').innerHTML = data.map(l => `
+        <div class="listing-card ${l.is_premium ? 'premium' : ''}" onclick="viewListing('${l.id}')">
+            <div class="listing-header">
+                <div class="listing-avatar">${l.server.charAt(l.server.length - 1)}</div>
+                <div><div class="listing-title">${l.title}</div><div class="listing-meta"><span>🌐 ${l.server}</span></div></div>
+            </div>
+            <p class="listing-body">${l.description}</p>
+        </div>
+    `).join('');
+}
+
+// ==================== LIDERLIK TABLOSU ====================
+async function renderLeaderboard(content) {
+    const { data: topPlayers } = await sb.from('profiles').select('*').order('rating', { ascending: false }).limit(10);
+    content.innerHTML = `
+        <h2>🏆 Oyuncu Liderlik Sıralaması</h2>
+        <p style="color:var(--text2); margin-bottom:20px;">Topluluk ve yönetim tarafından en yüksek puana layık görülen prestijli oyuncular.</p>
+        <div class="podyum">
+            <div class="podyum-sira p2">🥈 <h3>${topPlayers?.[1]?.username || '-'}</h3><p>Puan: ${topPlayers?.[1]?.rating || 0}</p></div>
+            <div class="podyum-sira p1">👑 <h3>${topPlayers?.[0]?.username || '-'}</h3><p>Puan: ${topPlayers?.[0]?.rating || 0}</p></div>
+            <div class="podyum-sira p3">🥉 <h3>${topPlayers?.[2]?.username || '-'}</h3><p>Puan: ${topPlayers?.[2]?.rating || 0}</p></div>
+        </div>
+        <table class="lead-table">
+            <thead><tr><th>Sıra</th><th>Oyuncu Adı</th><th>Rolü</th><th>Oyun Saati</th><th>Profil Puanı</th></tr></thead>
+            <tbody>
+                ${(topPlayers || []).map((p, idx) => `
+                    <tr>
+                        <td><b>#${idx + 1}</b></td>
+                        <td>${p.username}</td>
+                        <td><span class="role-badge rb-player">${p.role}</span></td>
+                        <td>${p.game_hours || 0} Saat</td>
+                        <td style="color:var(--gold);">★ ${p.rating || 0}</td>
+                    </tr>
+                `).join('')}
+            </tbody>
+        </table>
+    `;
+}
+
+// ==================== GELEN KUTUSU ====================
+async function renderInbox(content) {
+    const { data: inbound } = await sb.from('messages').select('*').eq('receiver_id', currentUser.id).order('created_at', { ascending: false });
+    content.innerHTML = `
+        <h2>📥 Gelen Kutusu & Bildirim Yönetimi</h2>
+        <p style="color:var(--text2); margin-bottom:20px;">Yönetim uyarıları ve ekip başvurularınızın detayları.</p>
+        <div style="display:flex; flex-direction:column; gap:12px;">
+            ${(inbound || []).length === 0 ? '<p style="color:var(--text3);">Gelen kutunuzda mesaj bulunmuyor.</p>' : inbound.map(m => `
+                <div style="background:var(--card); border:1px solid var(--border); padding:20px; border-radius:12px;">
+                    <div style="display:flex; justify-content:space-between; font-size:12px; color:var(--text3); margin-bottom:8px;">
+                        <span>✉️ Sistem Bildirimi</span>
+                        <span>${timeAgo(m.created_at)}</span>
+                    </div>
+                    <p style="font-size:14px; color:#fff; line-height:1.5;">${m.text}</p>
+                </div>
+            `).join('')}
+        </div>
+    `;
+}
+
+// ==================== EKIPLER VE BASVURU SISTEMI ====================
+async function renderTeams(content) {
+    const { data: teams } = await sb.from('teams').select('*').order('created_at', { ascending: false });
+    content.innerHTML = `
+        <h2>👥 Kayıtlı Ekipler & Aile Formasyonları</h2>
+        <p style="color:var(--text2); margin-bottom:20px;">Birlikte oynamak için bir aileye katılın veya ekibinizi tescil edin.</p>
+        <div class="listings">
+            ${(teams || []).map(t => `
+                <div class="listing-card" style="min-height:200px;">
+                    <div>
+                        <h3>🛡️ ${t.name}</h3>
+                        <p style="font-size:12px; color:var(--text2); margin:6px 0;">Sunucu: ${t.server} | Oluşum: ${t.type}</p>
+                        <p style="font-size:13px; color:var(--text2); margin-top:10px;">Aranan Nitelik: <b style="color:var(--red2);">${t.looking_for || 'Genel Katılım'}</b></p>
+                    </div>
+                    ${currentUser && currentUser.id !== t.founder_id ? `
+                        <button class="btn btn-blue btn-sm" style="width:100%; margin-top:14px;" onclick="applyToTeam('${t.id}', '${t.name}')">⚡ Başvuru Formu Gönder</button>
+                    ` : '<div style="font-size:11px;color:var(--text3);margin-top:14px;text-align:center;">Ekip Lideri Modu veya Misafir</div>'}
+                </div>
+            `).join('')}
+        </div>
+        ${currentUser ? `<button class="btn btn-red" style="margin-top:30px; width:100%;" onclick="createTeamPrompt()">➕ Yeni Resmi Ekip Tescili</button>` : ''}
+    `;
+}
+
+async function applyToTeam(teamId, teamName) {
+    const msg = prompt(`${teamName} ekibine iletilecek başvuru mesajınız (Yaş, Discord ve deneyim yazınız):`);
+    if(!msg) return;
+    const { data: targetTeam } = await sb.from('teams').select('founder_id').eq('id', teamId).single();
+    if(targetTeam) {
+        await sb.from('messages').insert([{ sender_id: currentUser.id, receiver_id: targetTeam.founder_id, text: `🚨 [EKİP BAŞVURUSU]: (${currentUser.username}) isimli oyuncu ekibinize başvurmak istiyor. Detay: ${msg}` }]);
+        showToast('✅ Başvurunuz ekip liderine başarıyla iletildi!');
+    }
+}
+
+async function createTeamPrompt() {
+    const name = prompt('Ekip / Aile İsmi:'); if(!name) return;
+    const server = prompt('Sunucu İsmi:', 'RP Grand #1');
+    const type = prompt('Oluşum Türü (Legal / Illegal):', 'Legal');
+    const looking = prompt('Aradığınız oyuncu kriterleri:');
+    await sb.from('teams').insert([{ name, server, type, looking_for: looking, founder_id: currentUser.id, current_members: 1, max_members: 40 }]);
+    showToast('🚀 Ekibiniz başarıyla sisteme tescil edildi!'); navigateTo('teams');
+}
+
+// ==================== TAM AUTH PACK (LOGIN, REG, FORGOT) ====================
+function renderLogin(content) {
+    content.innerHTML = `
+        <div class="form-container">
+            <h2>🔑 Hesap Girişi</h2>
+            <div class="form-group" style="margin-top:20px;"><label>E-Posta Adresi</label><input type="email" id="loginEmail" placeholder="isim@mail.com"></div>
+            <div class="form-group"><label>Şifre</label><input type="password" id="loginPass" placeholder="••••••••"></div>
+            <button class="btn btn-red" style="width:100%; margin-bottom:12px;" onclick="handleLogin()">Giriş Yap</button>
+            <button class="btn btn-outline" style="width:100%;" onclick="loginAsGuest()">🎭 Misafir / Hızlı Test Girişi</button>
+            <div class="auth-switch" onclick="navigateTo('register')">Hesabınız yok mu? Yeni bir hesap oluşturun</div>
+            <div class="auth-switch" style="margin-top:8px; font-size:12px; opacity:0.6;" onclick="navigateTo('forgot-password')">Şifremi unuttum</div>
+        </div>
+    `;
+}
+
+function renderRegister(content) {
+    content.innerHTML = `
+        <div class="form-container">
+            <h2>📝 Yeni Kayıt Oluştur</h2>
+            <div class="form-group" style="margin-top:20px;"><label>Kullanıcı Adı (Oyundaki Adınız)</label><input type="text" id="regName" placeholder="Michael_Scofield"></div>
+            <div class="form-group"><label>E-Posta Adresi</label><input type="email" id="regEmail" placeholder="isim@mail.com"></div>
+            <div class="form-group"><label>Şifre</label><input type="password" id="regPass" placeholder="En az 6 karakter"></div>
+            <button class="btn btn-blue" style="width:100%;" onclick="handleRegister()">Hesabı Oluştur</button>
+            <div class="auth-switch" onclick="navigateTo('login')">Zaten bir hesabınız var mı? Giriş yapın</div>
+        </div>
+    `;
+}
+
+function renderForgotPassword(content) {
+    content.innerHTML = `
+        <div class="form-container">
+            <h2>🔒 Şifre Sıfırlama</h2>
+            <p style="font-size:13px; color:var(--text2); text-align:center; margin:10px 0 20px 0;">E-posta adresinizi girerek sıfırlama bağlantısı talep edebilirsiniz.</p>
+            <div class="form-group"><label>E-Posta Adresiniz</label><input type="email" id="forgotEmail" placeholder="isim@mail.com"></div>
+            <button class="btn btn-red" style="width:100%;" onclick="handleForgotPassword()">Sıfırlama Bağlantısı Gönder</button>
+            <div class="auth-switch" onclick="navigateTo('login')">Giriş sayfasına geri dön</div>
+        </div>
+    `;
+}
+
+async function handleLogin() {
+    const email = document.getElementById('loginEmail').value; const pass = document.getElementById('loginPass').value;
+    const { data, error } = await sb.auth.signInWithPassword({ email, password: pass });
+    if(error) { showToast('❌ Hata: ' + error.message); return; }
+    await loadUserProfile(data.user.id); showToast('Giriş başarılı!'); navigateTo('home');
+}
+
+async function handleRegister() {
+    const name = document.getElementById('regName').value; const email = document.getElementById('regEmail').value; const pass = document.getElementById('regPass').value;
+    if(!name || name.length < 3) { showToast('Geçerli bir kullanıcı adı girin.'); return; }
+    const { data, error } = await sb.auth.signUp({ email, password: pass });
+    if(error) { showToast('❌ Kayıt Hatası: ' + error.message); return; }
+    if(data.user) {
+        await sb.from('profiles').upsert([{ id: data.user.id, username: name, role: 'Player', is_banned: false, game_hours: '0', rating: 5.0, rating_count: 1, created_at: new Date().toISOString() }]);
+        showToast('🚀 Kayıt başarılı! Giriş yapabilirsiniz.'); navigateTo('login');
+    }
+}
+
+async function handleForgotPassword() {
+    const email = document.getElementById('forgotEmail').value;
+    const { error } = await sb.auth.resetPasswordForEmail(email);
+    if(error) { showToast('Hata: ' + error.message); return; }
+    showToast('📩 Sıfırlama e-postası gönderildi (Gelen kutunuzu kontrol edin).'); navigateTo('login');
+}
+
+async function loginAsGuest() {
+    const { data, error } = await sb.auth.signInAnonymously(); if(error) return;
+    const rName = 'Gamer_' + Math.floor(Math.random() * 8999 + 1000);
+    await sb.from('profiles').upsert([{ id: data.user.id, username: rName, role: 'Player', is_banned: false, game_hours: '150', rating: 4.8, rating_count: 5, created_at: new Date().toISOString() }]);
+    await loadUserProfile(data.user.id); showToast('Test profiliniz aktif: ' + rName); navigateTo('home');
+}
+async function logout() { await sb.auth.signOut(); currentUser = null; clearInterval(window._chatInterval); showToast('Oturum sonlandırıldı.'); navigateTo('home'); }
+
+// ==================== ILAN VERME VE PROFILE DETAYI ====================
+function renderCreateListing(content) {
+    content.innerHTML = `
+        <div class="form-container">
+            <h2>📝 Yeni İlan Yayınlama Formu</h2>
+            <div class="form-group" style="margin-top:20px;"><label>İlan Başlığı</label><input type="text" id="listTitle" placeholder="Örn: Grove Street Ailesi Alımları Başladı"></div>
+            <div class="form-group"><label>Sunucu Seçimi</label><select id="listServer"><option>RP Grand #1</option><option>RP Grand #2</option></select></div>
+            <div class="form-group"><label>İlan Türü</label><select id="listType"><option value="lfm">LFM (Oyuncu/Grup Arıyorum)</option><option value="lfg">LFG (Bir Ekip Arıyorum)</option></select></div>
+            <div class="form-group"><label>İlan Açıklaması ve Kriterler</label><textarea id="listDesc" rows="5" placeholder="Aradığınız yaş sınırı, aktiflik durumu ve kuralları detaylandırın..."></textarea></div>
+            <button class="btn btn-red" style="width:100%; font-weight:800;" onclick="submitNewListing()">🚀 İlanı Yayına Al</button>
+        </div>
+    `;
+}
+async function submitNewListing() {
+    const title = document.getElementById('listTitle').value; const server = document.getElementById('listServer').value;
+    const type = document.getElementById('listType').value; const description = document.getElementById('listDesc').value;
+    if(!title || !description) { showToast('Lütfen tüm alanları doldurun.'); return; }
+    await sb.from('listings').insert([{ author_id: currentUser.id, title, server, type, description, discord: 'Mevcut', is_premium: false, deleted: false }]);
+    showToast('✅ İlanınız başarıyla yayına alındı!'); navigateTo('home');
+}
+
+async function renderProfile(content, uid) {
+    const id = uid || currentUser.id;
+    const { data: user } = await sb.from('profiles').select('*').eq('id', id).single(); if(!user) return;
+    content.innerHTML = `
+        <div class="form-container" style="max-width:650px;">
+            <h2>👤 Oynatıcı Profil Kartı</h2>
+            <div style="text-align:center; margin:15px 0 25px 0;"><span style="font-size:48px;">🎮</span><h3 style="margin-top:10px;">${user.username}</h3></div>
+            <div class="modal-row"><span>Sistemdeki Rol yetkisi</span><span class="role-badge rb-curator">${user.role}</span></div>
+            <div class="modal-row"><span>Kayıt Tarihi</span><span>${new Date(user.created_at).toLocaleDateString()}</span></div>
+            <div class="modal-row"><span>Hesap Güvenlik Durumu</span><span style="color:var(--green);">Güvenli Aktif</span></div>
+            <div class="modal-row"><span>Toplam Oyun Süresi</span><span>${user.game_hours || 0} Saat</span></div>
+            <div class="modal-row"><span>Profil Saygınlık Puanı</span><span style="color:var(--gold); font-weight:800;">★ ${user.rating || 0}</span></div>
+        </div>
+    `;
+}
+
+async function viewListing(id) {
+    const { data: l } = await sb.from('listings').select('*').eq('id', id).single(); if(!l) return;
+    const overlay = document.createElement('div'); overlay.className = 'modal-overlay active';
+    overlay.innerHTML = `
+        <div class="modal">
+            <button class="modal-close" onclick="this.closest('.modal-overlay').remove()">✕</button>
+            <h3>${l.title}</h3>
+            <p style="color:var(--text3); font-size:12px; margin:5px 0 20px 0;">🌐 Lokasyon: ${l.server} · Yayınlanma: ${timeAgo(l.created_at)}</p>
+            <div style="background:rgba(255,255,255,0.02); padding:20px; border-radius:10px; margin-bottom:20px; font-size:14px; line-height:1.6; color:var(--text2); border:1px solid rgba(255,255,255,0.04);">${l.description}</div>
+            <div style="display:flex; gap:10px;">
+                <button class="btn btn-blue btn-sm" style="flex:1;" onclick="showToast('İletişim bilgisi kopyalandı!')">💬 İletişime Geç (Discord)</button>
+                ${isAdmin() ? `<button class="btn btn-outline btn-sm" style="color:var(--red); border-color:var(--red);" onclick="deleteListing('${l.id}'); this.closest('.modal-overlay').remove();">🗑️ Yönetici Olarak Kaldır</button>` : ''}
+            </div>
+        </div>
+    `;
+    document.body.appendChild(overlay);
+}
+async function deleteListing(id) { await sb.from('listings').update({ deleted: true }).eq('id', id); showToast('İlan sistemden kaldırıldı.'); navigateTo('home'); }
+
+// ==================== ADVANCED MANAGEMENT PANEL ====================
+async function renderAdminPanel(content) {
+    const { data: users } = await sb.from('profiles').select('*');
+    content.innerHTML = `
+        <div class="form-container" style="max-width:850px;">
+            <h2>👑 Proje Üst Yönetim Konsolu</h2>
+            <p style="font-size:13px; color:var(--text2); margin-bottom:20px; text-align:center;">Sistem genel duyurularını ve kullanıcı hesap cezalandırmalarını buradan yönetin.</p>
+            
+            <div class="form-group">
+                <label>📢 Sistem Geneli Pop-up / Kırmızı Duyuru Yayınla</label>
+                <input type="text" id="admAnnText" placeholder="Önemli bakım veya güncelleme duyurusu...">
+                <button class="btn btn-gold btn-sm" style="margin-top:10px; width:100%;" onclick="admAnnounce()">Duyuruyu Flaş Et</button>
+            </div>
+            
+            <hr style="border:none; border-top:1px solid rgba(255,255,255,0.05); margin:25px 0;">
+            
+            <div class="form-group">
+                <label>📩 Kullanıcıya Doğrudan Uyarı / DM İlet</label>
+                <select id="admDmUser" style="margin-bottom:10px;">${(users || []).map(u => `<option value="${u.id}">${u.username}</option>`).join('')}</select>
+                <input type="text" id="admDmText" placeholder="İletilecek resmi uyarı yazısı...">
+                <button class="btn btn-blue btn-sm" style="margin-top:10px; width:100%;" onclick="admSendDm()">Özel Mesajı Gönder</button>
+            </div>
+
+            <hr style="border:none; border-top:1px solid rgba(255,255,255,0.05); margin:25px 0;">
+            
+            <label class="form-group" style="display:block; font-weight:700; margin-bottom:10px; font-size:12px; color:var(--text2);">🚫 Kayıtlı Üye Listesi & Uzaklaştırma (Ban) Yönetimi</label>
+            <div style="max-height:250px; overflow-y:auto; padding-right:5px;">
+                ${(users || []).map(u => `
+                    <div class="admin-user-row">
+                        <div>
+                            <b>${u.username}</b> <span class="role-badge rb-player" style="font-size:9px;">${u.role}</span>
+                            <div style="font-size:11px; color:var(--text3);">Durum: ${u.is_banned ? '❌ Engelli' : '✅ Aktif'}</div>
+                        </div>
+                        <button class="btn btn-sm" style="padding:6px 12px; font-size:11px; background:${u.is_banned ? var(--green) : var(--red)}; color:#fff;" onclick="toggleUserBan('${u.id}', ${u.is_banned})">
+                            ${u.is_banned ? 'Yasağı Kaldır' : 'Uzaklaştır'}
+                        </button>
+                    </div>
+                `).join('')}
+            </div>
+        </div>
+    `;
+}
+
+async function admAnnounce() {
+    const txt = document.getElementById('admAnnText').value; if(!txt) return;
+    await sb.from('announcements').insert([{ author_id: currentUser.id, text: txt }]);
+    showToast('Genel duyuru başarıyla güncellendi!'); navigateTo('home');
+}
+async function admSendDm() {
+    const uid = document.getElementById('admDmUser').value; const txt = document.getElementById('admDmText').value; if(!txt) return;
+    await sb.from('messages').insert([{ sender_id: currentUser.id, receiver_id: uid, text: `⚠️ [YÖNETİM SİSTEM UYARISI]: ${txt}` }]);
+    showToast('Resmi uyarı kullanıcının gelen kutusuna teslim edildi.');
+}
+async function toggleUserBan(uid, currentStatus) {
+    await sb.from('profiles').update({ is_banned: !currentStatus }).eq('id', uid);
+    showToast('Kullanıcı hesap durumu güncellendi.'); renderAdminPanel(document.getElementById('dynamicContent'));
+}
+
+// ==================== 10s POPUP DUYURU MOTORU ====================
+async function triggerGlobalPopup() {
+    const { data } = await sb.from('announcements').select('*').order('created_at', { ascending: false }).limit(1);
+    if(data && data[0]) {
+        const pop = document.createElement('div'); pop.className = 'modal-overlay active';
+        pop.innerHTML = `
+            <div class="modal" style="border:1px solid var(--red); max-width:420px; text-align:center;">
+                <h3 style="color:var(--red);">📢 Önemli Sistem Duyurusu</h3>
+                <p style="margin-top:14px; color:var(--text2); font-size:14px; line-height:1.5;">${data[0].text}</p>
+                <small style="color:var(--text3); display:block; margin-top:20px; font-weight:700;">Bu pencere 10 saniye sonra kendiliğinden kapanacaktır.</small>
+            </div>
+        `;
+        document.body.appendChild(pop);
+        setTimeout(() => pop.remove(), 10000);
+    }
+}
+
+// ==================== INITIALIZER SYSTEM ====================
+async function appCoreInit() {
+    const { data: { session } } = await sb.auth.getSession();
+    if(session) await loadUserProfile(session.user.id);
+    await navigateTo('home');
+    triggerGlobalPopup();
+}
+document.addEventListener('DOMContentLoaded', appCoreInit);
+</script>
+</body>
+</html>
